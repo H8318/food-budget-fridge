@@ -108,6 +108,59 @@
   .primary:active{transform:scale(.995);background:#E15B31}
   .hint-line{margin:0;font-size:11.5px;color:#A99C90;text-align:center}
 
+  /* ---------- grocery → fridge link ---------- */
+  .link-box{margin-top:2px;border:1.5px solid #FFDDC7;background:#FFF8F2;border-radius:16px;padding:11px 11px 12px}
+  .link-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .link-title{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:800;color:#A9552C;letter-spacing:-.01em}
+  .switch{display:flex;align-items:center;gap:7px;min-height:44px;font-size:12px;font-weight:800;color:#8C7D71}
+  .switch input{
+    -webkit-appearance:none;appearance:none;position:relative;margin:0;width:46px;height:27px;border-radius:99px;
+    background:#E4D6C7;transition:background .18s ease;flex:0 0 auto;
+  }
+  .switch input::after{content:"";position:absolute;top:3px;left:3px;width:21px;height:21px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:transform .18s ease}
+  .switch input:checked{background:var(--good)}
+  .switch input:checked::after{transform:translateX(19px)}
+  .switch input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .link-rows{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+  .link-row{background:#fff;border:1.5px solid #F3E6D9;border-radius:14px;padding:7px 9px 9px}
+  .lr-top{display:flex;align-items:center;gap:4px}
+  .lr-name{flex:1;min-width:0;min-height:44px;padding:0 2px;border:0;border-bottom:1.5px solid #F3E9DE;border-radius:0;background:transparent;font-size:16px;font-weight:700}
+  .lr-name:focus{outline:none;border-bottom-color:var(--accent)}
+  .lr-name::placeholder{color:#C9BCB0;font-weight:600}
+  .lr-del{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;font-size:13px;color:#C9BCB0;flex:0 0 auto}
+  .lr-del:active{background:var(--bad-soft);color:var(--bad)}
+  .seg{display:flex;gap:2px;background:#F6F1EB;border-radius:11px;padding:3px;margin-top:7px}
+  .seg button{flex:1;min-height:38px;border-radius:9px;font-size:12px;font-weight:800;color:#8C7D71;letter-spacing:-.01em}
+  .seg button.on{background:#fff;color:var(--accent-ink);box-shadow:0 1px 4px rgba(84,58,38,.12)}
+  .lr-date{display:flex;align-items:center;gap:8px;margin-top:7px}
+  .lr-date>span{font-size:11.5px;font-weight:800;color:#A98A72;flex:0 0 auto}
+  .lr-date input{flex:1;min-width:0;min-height:40px;padding:0 9px;border:1.5px solid #F3E6D9;border-radius:10px;background:#FDFBF9;font-size:14px}
+  .lr-date input:focus{outline:none;border-color:var(--accent);background:#fff}
+  .add-row{width:100%;min-height:44px;margin-top:8px;border-radius:12px;border:1.5px dashed #F1CBB2;background:#fff;color:#C2461E;font-size:12.5px;font-weight:800}
+  .add-row:active{background:#FFF3EA}
+  .link-hint{margin:8px 0 0;font-size:11.5px;line-height:1.5;color:#A98A72;word-break:keep-all}
+  .link-hint b{color:#C2461E}
+  .lr-portion{display:flex;align-items:center;gap:5px;margin-top:7px;flex-wrap:wrap}
+  .lr-portion>span{font-size:11.5px;font-weight:800;color:#A98A72;flex:0 0 auto}
+  .lr-qty{width:46px;min-height:34px;padding:0 4px;border:1.5px solid #F3E6D9;border-radius:9px;background:#FDFBF9;font-size:14px;font-weight:800;text-align:center}
+  .lr-qty:focus{outline:none;border-color:var(--accent);background:#fff}
+  .seg-sm{display:flex;gap:2px;background:#F6F1EB;border-radius:9px;padding:2px}
+  .seg-sm button{min-height:34px;padding:0 8px;border-radius:7px;font-size:11.5px;font-weight:800;color:#8C7D71;flex:0 0 auto}
+  .seg-sm button.on{background:#fff;color:var(--accent-ink);box-shadow:0 1px 4px rgba(84,58,38,.12)}
+
+  /* ---------- portion (1회성 / 여러 번) ---------- */
+  .seg-inline{display:flex;gap:2px;background:#F6F1EB;border-radius:10px;padding:2px}
+  .seg-inline button{min-height:38px;padding:0 11px;border-radius:8px;font-size:12px;font-weight:800;color:#8C7D71;flex:0 0 auto}
+  .seg-inline button.on{background:#fff;color:var(--accent-ink);box-shadow:0 1px 4px rgba(84,58,38,.12)}
+  .portion-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .portion-sub{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:6px}
+  .qty-input{width:52px;min-height:38px;padding:0 4px;border:1.5px solid var(--line);border-radius:9px;background:#FDFBF9;text-align:center;font-size:15px;font-weight:800}
+  .qty-input:focus{outline:none;border-color:var(--accent);background:#fff}
+  .qty-box{display:flex;align-items:center;gap:5px;background:#FDFBF9;border:1.5px solid var(--line);border-radius:11px;padding:4px 8px}
+  .qty-box>span{font-size:11.5px;font-weight:800;color:#8C7D71}
+  .qty-box input{width:44px;min-height:32px;padding:0;border:0;background:transparent;text-align:center;font-size:15px;font-weight:800}
+  .qty-box input:focus{outline:none}
+
   /* ---------- category summary ---------- */
   .cat-sum{display:flex;flex-direction:column;gap:12px}
   .cat-row{display:grid;grid-template-columns:118px 1fr 76px;gap:8px;align-items:center}
@@ -126,6 +179,12 @@
   .exp .body{flex:1;min-width:0}
   .exp .title{margin:0;font-size:14.5px;font-weight:700;line-height:1.32;word-break:keep-all;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
   .exp .meta{margin:2px 0 0;font-size:11.5px;font-weight:600;color:var(--muted)}
+  .exp .badges{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
+  .exp .tag{display:inline-flex;align-items:center;gap:3px;min-height:26px;padding:2px 7px;border-radius:8px;background:#F3EEE8;color:#8C7D71;font-size:11px;font-weight:800;letter-spacing:-.01em}
+  .exp .tag.linked{background:#E7F0FA;color:#2A689B}
+  .exp .tag.linked:active{background:#D6E7F8}
+  .exp.flash{animation:expFlash 1.6s ease}
+  @keyframes expFlash{0%,100%{box-shadow:0 4px 14px rgba(84,58,38,.05)}25%{box-shadow:0 0 0 3px rgba(240,102,58,.45)}}
   .exp .right{display:flex;align-items:center;gap:2px;flex:0 0 auto}
   .exp .amt{font-size:14.5px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
   .icon-del{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:14px;color:#C9BCB0}
@@ -137,7 +196,7 @@
   .pill{flex:0 0 auto;font-size:11.5px;font-weight:800;padding:7px 10px;border-radius:99px;background:#F1EBE3;color:#7C6E62;white-space:nowrap}
   .pill.urgent{background:var(--bad-soft);color:var(--bad)}
   .pill.good{background:var(--good-soft);color:#227A52}
-  .fridge-item{background:#fff;border-radius:18px;padding:12px;box-shadow:0 4px 14px rgba(84,58,38,.05);border-left:4px solid #E9E1D8}
+  .fridge-item{background:#fff;border-radius:18px;padding:12px;box-shadow:0 4px 14px rgba(84,58,38,.05);border-left:4px solid #E9E1D8;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
   .fridge-item.red{border-left-color:var(--bad)}
   .fridge-item.amber{border-left-color:var(--warn)}
   .fridge-item.good{border-left-color:var(--good)}
@@ -153,6 +212,20 @@
   .badge.good{background:var(--good-soft);color:#227A52}
   .badge.none{background:#F4F0EB;color:#9A8B7D}
   .fi-memo{margin:7px 0 0;font-size:12.5px;color:#6E6258;line-height:1.4;word-break:keep-all}
+  .fi-src{display:inline-flex;align-items:center;gap:4px;max-width:100%;margin-top:7px;min-height:28px;padding:3px 8px;border-radius:8px;background:#FFF4EC;color:#A9552C;font-size:11px;font-weight:800;letter-spacing:-.01em;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+  .fi-src:active{background:#FFE9DA}
+  .fi-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+  .fi-tags .fi-src{margin-top:0}
+  .fi-tag{display:inline-flex;align-items:center;gap:3px;min-height:26px;padding:2px 8px;border-radius:8px;background:#EDF3EA;color:#4A7A45;font-size:11px;font-weight:800;letter-spacing:-.01em}
+  .fi-tag.once{background:#F3EEE8;color:#8C7D71}
+  .portion-step{display:flex;align-items:center;gap:8px;margin-top:9px;background:#F7F3EE;border-radius:12px;padding:3px}
+  .portion-step button{width:46px;min-height:40px;border-radius:9px;background:#fff;color:#5C5045;font-size:17px;font-weight:800;box-shadow:0 1px 4px rgba(84,58,38,.1);flex:0 0 auto}
+  .portion-step button:active{background:var(--accent-soft);color:var(--accent-ink)}
+  .portion-step .ps-mid{flex:1;text-align:center;font-size:12.5px;font-weight:700;color:#6E6258}
+  .portion-step .ps-mid b{font-size:13px;font-weight:800;color:var(--ink)}
+  .portion-step .ps-total{color:#A99C90;font-weight:700;font-size:11.5px}
+  .btn-edit{width:44px;min-height:44px;border-radius:12px;background:#F7F3EE;color:#8C7D71;font-size:15px;flex:0 0 auto}
+  .btn-edit:active{background:var(--accent-soft);color:var(--accent-ink)}
   .fi-actions{display:flex;gap:6px;margin-top:9px}
   .btn-eaten{flex:1;min-height:44px;border-radius:12px;background:var(--good-soft);color:#1F7A50;font-size:13.5px;font-weight:800}
   .btn-eaten:active{background:#D6EFE3}
@@ -198,6 +271,10 @@
   .modal-actions{display:flex;gap:8px;margin-top:4px}
   .modal-actions button{flex:1;min-height:48px;border-radius:13px;font-size:14.5px;font-weight:800}
   .btn-ghost{background:#F3EEE8;color:#5C5045}
+  .modal-actions.stack{flex-direction:column}
+  .modal-actions.stack #confirmOk{order:1}
+  .modal-actions.stack #confirmAlt{order:2}
+  .modal-actions.stack #confirmCancel{order:3;min-height:44px;background:transparent;color:#8C7D71}
   .btn-accent{background:var(--accent);color:#fff}
   .btn-danger{background:var(--bad);color:#fff}
   .file-pick{display:flex;align-items:center;justify-content:center;min-height:48px;border-radius:13px;border:1.5px dashed #E3D4C4;background:#FDFBF9;font-size:13.5px;font-weight:800;color:#8A7B6E;margin-bottom:10px}
@@ -286,6 +363,20 @@
           <button type="button" class="chip" data-cat="cafe" aria-pressed="false">☕ 카페·간식</button>
         </div>
       </div>
+
+      <div class="link-box" id="fridgeLink" hidden>
+        <div class="link-head">
+          <span class="link-title">🧊 냉장고에 바로 넣기</span>
+          <label class="switch"><input type="checkbox" id="linkToggle" checked aria-label="냉장고에 넣기"><span>넣기</span></label>
+        </div>
+        <div id="linkBody">
+          <div class="link-rows" id="linkRows"></div>
+          <button type="button" class="add-row" id="addRowBtn">+ 품목 추가</button>
+          <p class="link-hint" id="linkHint"></p>
+        </div>
+        <p class="link-hint" id="linkOffHint" hidden>이번 장보기는 냉장고에 넣지 않아요. 나중에 냉장고 보드에서 직접 넣을 수 있어요.</p>
+      </div>
+
       <button type="submit" class="primary">기록하기</button>
     </form>
 
@@ -320,6 +411,22 @@
           <button type="button" class="chip" data-store="fridge" aria-pressed="false">🧊 냉장</button>
           <button type="button" class="chip" data-store="freezer" aria-pressed="false">❄️ 냉동</button>
           <button type="button" class="chip" data-store="pantry" aria-pressed="false">🧺 실온</button>
+        </div>
+      </div>
+      <div class="field">
+        <span>분량</span>
+        <div class="portion-row">
+          <div class="seg-inline" id="frPTypeSeg" role="group" aria-label="1회성 또는 여러 번">
+            <button type="button" data-ptype="once" class="on">1회성</button>
+            <button type="button" data-ptype="multi">여러 번</button>
+          </div>
+          <div class="portion-sub" id="frQtyWrap" hidden>
+            <input type="number" class="qty-input" id="frQty" value="3" min="1" max="99" inputmode="numeric" aria-label="분량 숫자">
+            <div class="seg-inline" id="frUnitSeg" role="group" aria-label="분량 단위">
+              <button type="button" data-punit="day" class="on">일치</button>
+              <button type="button" data-punit="serving">회</button>
+            </div>
+          </div>
         </div>
       </div>
       <label class="field">
@@ -378,6 +485,7 @@
     <p id="confirmBody"></p>
     <div class="modal-actions">
       <button type="button" class="btn-ghost" id="confirmCancel">취소</button>
+      <button type="button" class="btn-ghost" id="confirmAlt" hidden>지출만 지우기</button>
       <button type="button" class="btn-danger" id="confirmOk">확인</button>
     </div>
   </div>
@@ -395,6 +503,56 @@
     <div class="modal-actions">
       <button type="button" class="btn-ghost" id="importCancel">취소</button>
       <button type="button" class="btn-accent" id="importOk">불러오기</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="editModal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="editTitle">
+    <h3 id="editTitle">재료 수정</h3>
+    <p>이름·보관·소비기한·남은 분량을 고칠 수 있어요.</p>
+    <div class="form" style="gap:11px">
+      <label class="field">
+        <span>재료명</span>
+        <input type="text" id="edName" maxlength="30" placeholder="예: 대파">
+      </label>
+      <div class="field">
+        <span>보관</span>
+        <div class="chips" id="edStoreChips" role="group" aria-label="보관 방법">
+          <button type="button" class="chip" data-store="fridge">🧊 냉장</button>
+          <button type="button" class="chip" data-store="freezer">❄️ 냉동</button>
+          <button type="button" class="chip" data-store="pantry">🧺 실온</button>
+        </div>
+      </div>
+      <label class="field">
+        <span>소비기한 (선택)</span>
+        <input type="date" id="edExpiry">
+      </label>
+      <div class="field">
+        <span>분량</span>
+        <div class="portion-row">
+          <div class="seg-inline" id="edPTypeSeg" role="group" aria-label="1회성 또는 여러 번">
+            <button type="button" data-ptype="once">1회성</button>
+            <button type="button" data-ptype="multi">여러 번</button>
+          </div>
+        </div>
+        <div class="portion-sub" id="edQtyRow" hidden>
+          <label class="qty-box"><span>남은</span><input type="number" id="edLeft" min="0" max="99" inputmode="numeric"><span class="ed-unit">일치</span></label>
+          <label class="qty-box"><span>총</span><input type="number" id="edTotal" min="1" max="99" inputmode="numeric"><span class="ed-unit">일치</span></label>
+          <div class="seg-inline" id="edUnitSeg" role="group" aria-label="분량 단위">
+            <button type="button" data-punit="day">일치</button>
+            <button type="button" data-punit="serving">회</button>
+          </div>
+        </div>
+      </div>
+      <label class="field">
+        <span>메모 (선택)</span>
+        <input type="text" id="edMemo" maxlength="40" placeholder="예: 손질해서 밀폐용기에">
+      </label>
+    </div>
+    <div class="modal-actions" style="margin-top:14px">
+      <button type="button" class="btn-ghost" id="editCancel">취소</button>
+      <button type="button" class="btn-accent" id="editSave">저장</button>
     </div>
   </div>
 </div>
@@ -431,6 +589,17 @@
   var selStore = 'fridge';
   var toastTimer = null;
   var toastHandler = null;
+  var linkOn = true;
+  var linkRowsDirty = false;
+  var titleTimer = null;
+  var frPType = 'once';
+  var frUnit = 'day';
+  var editId = null;
+  var edStore = 'fridge';
+  var edPType = 'once';
+  var edUnit = 'day';
+  var lpTimer = null;
+  var lpFired = false;
 
   /* ---------------- helpers ---------------- */
   function $(id) { return document.getElementById(id); }
@@ -462,6 +631,14 @@
     for (var i = 0; i < STORES.length; i++) { if (STORES[i].id === id) return STORES[i]; }
     return STORES[0];
   }
+  function unitLabel(unit) { return unit === 'serving' ? '회' : '일치'; }
+  function portionText(p) {
+    return p.type === 'once' ? '1회성' : p.left + unitLabel(p.unit) + ' 남음';
+  }
+  function fridgeById(id) {
+    for (var i = 0; i < state.fridge.length; i++) { if (state.fridge[i].id === id) return state.fridge[i]; }
+    return null;
+  }
   function fmtMD(key) {
     var d = parseKey(key);
     return (d.getMonth() + 1) + '/' + d.getDate();
@@ -479,6 +656,19 @@
   function blankState() {
     return { version: 1, seeded: false, budgets: {}, expenses: [], fridge: [], eaten: [] };
   }
+  function cleanPortion(p) {
+    p = p && typeof p === 'object' ? p : {};
+    var type = p.type === 'multi' ? 'multi' : 'once';
+    if (type === 'once') return { type: 'once', unit: 'day', total: 1, left: 1 };
+    var unit = p.unit === 'serving' ? 'serving' : 'day';
+    var total = Math.round(Number(p.total));
+    if (!isFinite(total) || total < 1) total = 1;
+    total = Math.min(99, total);
+    var left = Math.round(Number(p.left));
+    if (!isFinite(left)) left = total;
+    left = Math.max(0, Math.min(total, left));
+    return { type: 'multi', unit: unit, total: total, left: left };
+  }
   function cleanExpense(e) {
     if (!e || typeof e !== 'object') return null;
     var date = typeof e.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(e.date) ? e.date : todayKey();
@@ -492,6 +682,7 @@
       id: cleanId(e.id, 'e'),
       date: date, title: title, category: cat, amount: amount,
       createdAt: isFinite(Number(e.createdAt)) ? Number(e.createdAt) : Date.now(),
+      fridgeLinked: isFinite(Number(e.fridgeLinked)) ? Math.max(0, Math.round(Number(e.fridgeLinked))) : 0,
       sample: !!e.sample
     };
   }
@@ -507,6 +698,8 @@
       name: name, storage: store, expiry: expiry,
       memo: typeof f.memo === 'string' ? f.memo.slice(0, 60) : '',
       createdAt: isFinite(Number(f.createdAt)) ? Number(f.createdAt) : Date.now(),
+      linkedExpenseId: (typeof f.linkedExpenseId === 'string' && /^[A-Za-z0-9_-]{1,40}$/.test(f.linkedExpenseId)) ? f.linkedExpenseId : '',
+      portion: cleanPortion(f.portion),
       sample: !!f.sample
     };
   }
@@ -532,6 +725,17 @@
         }
       });
     }
+    // 장보기 ↔ 냉장고 연결 정리: 없는 지출을 가리키는 링크는 끊는다.
+    var expIds = {};
+    expenses.forEach(function (e) { expIds[e.id] = true; });
+    var linkedCount = {};
+    fridge.forEach(function (f) {
+      if (f.linkedExpenseId && !expIds[f.linkedExpenseId]) f.linkedExpenseId = '';
+      if (f.linkedExpenseId) linkedCount[f.linkedExpenseId] = (linkedCount[f.linkedExpenseId] || 0) + 1;
+    });
+    expenses.forEach(function (e) {
+      if (!e.fridgeLinked && linkedCount[e.id]) e.fridgeLinked = linkedCount[e.id];
+    });
     return {
       version: 1,
       seeded: p && p.seeded === false ? false : true,
@@ -580,29 +784,41 @@
       [4, '스타벅스 카페라떼', 6500, 'cafe'],
       [6, '이마트 장보기', 42300, 'grocery'],
       [8, '동네 빵집 소금빵', 4500, 'cafe'],
-      [11, '계란·두부', 7900, 'grocery']
+      [11, '계란 10구', 7900, 'grocery']
     ];
     state.expenses = E.map(function (row, i) {
       return {
         id: 'sample-e' + i, date: dayAgo(row[0]), title: row[1], category: row[3],
-        amount: row[2], createdAt: stamp - i * 1000, sample: true
+        amount: row[2], createdAt: stamp - i * 1000, sample: true, fridgeLinked: 0
       };
     });
+    // [이름, 보관, 소비기한(D+n / null), 메모, 연결된 장보기 지출 번호, 분량]
     var F = [
-      ['그릭요거트', 'fridge', 2, '아침에 꿀 얹어 먹기'],
-      ['유청 (요거트 만들고 남은 것)', 'fridge', 4, '베이킹 반죽·스무디에'],
-      ['방울토마토', 'fridge', -1, '샐러드용'],
-      ['두부', 'fridge', 1, '오늘 저녁 부침개'],
-      ['대파', 'fridge', 6, '손질해서 밀폐용기에'],
-      ['냉동 블루베리', 'freezer', 45, '오트밀에 한 줌'],
-      ['계란', 'fridge', 12, '10구'],
-      ['파스타면', 'pantry', null, '500g 중 1/3 남음']
+      ['그릭요거트', 'fridge', 2, '아침에 꿀 얹어 먹기', 1, ['multi', 'serving', 5, 3]],
+      ['유청 (요거트 만들고 남은 것)', 'fridge', 4, '베이킹 반죽·스무디에', 1, ['multi', 'serving', 6, 5]],
+      ['방울토마토', 'fridge', -1, '샐러드용', 1, ['once']],
+      ['두부', 'fridge', 1, '오늘 저녁 부침개', 5, ['once']],
+      ['대파', 'fridge', 6, '손질해서 밀폐용기에', 5, ['multi', 'day', 7, 7]],
+      ['냉동 블루베리', 'freezer', 45, '오트밀에 한 줌', null, ['multi', 'serving', 10, 8]],
+      ['계란', 'fridge', 12, '10구', 7, ['multi', 'serving', 10, 6]],
+      ['파스타면', 'pantry', null, '500g 중 1/3 남음', null, ['multi', 'serving', 3, 1]]
     ];
     state.fridge = F.map(function (row, i) {
+      var link = row[4] === null ? '' : 'sample-e' + row[4];
+      if (link) {
+        for (var k = 0; k < state.expenses.length; k++) {
+          if (state.expenses[k].id === link) state.expenses[k].fridgeLinked++;
+        }
+      }
+      var p = row[5];
+      var portion = p[0] === 'once'
+        ? { type: 'once', unit: 'day', total: 1, left: 1 }
+        : { type: 'multi', unit: p[1], total: p[2], left: p[3] };
       return {
         id: 'sample-f' + i, name: row[0], storage: row[1],
         expiry: row[2] === null ? '' : dayAhead(row[2]),
-        memo: row[3], createdAt: stamp - i * 1000, sample: true
+        memo: row[3], createdAt: stamp - i * 1000, sample: true,
+        linkedExpenseId: link, portion: portion
       };
     });
     // 실제로 다 먹은 기록도 하나
@@ -733,9 +949,17 @@
           nf.format(dayTotals[e.date]) + '원</span></li>';
       }
       var c = catOf(e.category);
-      html += '<li class="exp">' +
+      var live = linkedFridgeOf(e.id).length;
+      var tags = '';
+      if (live > 0) {
+        tags = '<span class="badges"><button type="button" class="tag linked" data-goto-fridge="' + e.id +
+          '" aria-label="연동된 냉장고 재료 보기">🧊 냉장고 ' + live + '건 연동</button></span>';
+      } else if (e.fridgeLinked > 0) {
+        tags = '<span class="badges"><span class="tag">🧊 연동 재료 정리됨</span></span>';
+      }
+      html += '<li class="exp" data-exp-row="' + e.id + '">' +
         '<span class="emoji" style="background:' + c.soft + '">' + c.emoji + '</span>' +
-        '<span class="body"><p class="title">' + esc(e.title) + '</p><p class="meta">' + c.label + '</p></span>' +
+        '<span class="body"><p class="title">' + esc(e.title) + '</p><p class="meta">' + c.label + '</p>' + tags + '</span>' +
         '<span class="right"><span class="amt">' + nf.format(e.amount) + '원</span>' +
         '<button type="button" class="icon-del" data-del-exp="' + e.id + '" aria-label="' + esc(e.title) + ' 기록 삭제">✕</button></span>' +
         '</li>';
@@ -800,16 +1024,37 @@
     ul.innerHTML = rows.map(function (f) {
       var u = urgencyOf(f.expiry);
       var s = storeOf(f.storage);
+      var p = f.portion;
       var sub = s.label + ' · ' + (f.expiry ? fmtMD(f.expiry) + '까지' : '기한 없음');
-      return '<li class="fridge-item ' + u.level + '">' +
+      if (p.type === 'multi' && p.total > 1) sub += ' · 총 ' + p.total + unitLabel(p.unit);
+      var srcExp = f.linkedExpenseId ? expById(f.linkedExpenseId) : null;
+      var srcHtml = '';
+      if (srcExp) {
+        var st = srcExp.title.length > 12 ? srcExp.title.slice(0, 12) + '…' : srcExp.title;
+        srcHtml = '<button type="button" class="fi-src" data-goto-exp="' + srcExp.id + '">🛒 ' + esc(st) + ' · ' + fmtMD(srcExp.date) + '</button>';
+      }
+      var portionTag = p.type === 'multi'
+        ? '<span class="fi-tag">🍽 ' + p.left + unitLabel(p.unit) + ' 남음</span>'
+        : '<span class="fi-tag once">1회성</span>';
+      var step = p.type === 'multi'
+        ? '<div class="portion-step">' +
+            '<button type="button" data-portion-minus="' + f.id + '" aria-label="한 번치 줄이기">−</button>' +
+            '<span class="ps-mid"><b>' + p.left + unitLabel(p.unit) + '</b> 남음 <span class="ps-total">/ 총 ' + p.total + unitLabel(p.unit) + '</span></span>' +
+            '<button type="button" data-portion-plus="' + f.id + '" aria-label="한 번치 더하기">+</button>' +
+          '</div>'
+        : '';
+      return '<li class="fridge-item ' + u.level + '" data-fridge-id="' + f.id + '">' +
         '<div class="fi-head">' +
           '<span class="fi-emoji">' + s.emoji + '</span>' +
           '<div class="fi-title"><p class="fi-name">' + esc(f.name) + '</p><p class="fi-sub">' + sub + '</p></div>' +
           '<span class="badge ' + u.level + '">' + u.text + '</span>' +
         '</div>' +
+        '<div class="fi-tags">' + srcHtml + portionTag + '</div>' +
         (f.memo ? '<p class="fi-memo">' + esc(f.memo) + '</p>' : '') +
+        step +
         '<div class="fi-actions">' +
           '<button type="button" class="btn-eaten" data-eat="' + f.id + '">✓ 다 먹음</button>' +
+          '<button type="button" class="btn-edit" data-edit-fridge="' + f.id + '" aria-label="재료 수정">✏️</button>' +
           '<button type="button" class="btn-del" data-del-fridge="' + f.id + '" aria-label="' + esc(f.name) + ' 삭제">🗑</button>' +
         '</div>' +
         '</li>';
@@ -828,6 +1073,202 @@
     renderExpenses();
     renderFridge();
     renderSampleNote();
+  }
+
+  /* ---------------- grocery ↔ fridge link ---------------- */
+  function autoItems(title) {
+    var t = String(title || '').replace(/\s+/g, ' ').trim();
+    if (!t) return [];
+    var parts = t.split(/[,，、·+&\/\n]/).map(function (s) { return s.trim(); })
+      .filter(function (s) { return s && s.length <= 20; });
+    if (parts.length > 1) return parts.slice(0, 8);
+    var one = parts[0] || '';
+    if (one && one.length <= 20 && one.indexOf(' ') < 0) return [one];
+    return [];
+  }
+  function segHtml(store) {
+    return STORES.map(function (s) {
+      return '<button type="button" data-store="' + s.id + '"' + (store === s.id ? ' class="on"' : '') + '>' +
+        s.emoji + ' ' + s.label + '</button>';
+    }).join('');
+  }
+  function buildPortion(type, unit, rawQty) {
+    if (type !== 'multi') return { type: 'once', unit: 'day', total: 1, left: 1 };
+    var q = Math.round(Number(rawQty));
+    if (!isFinite(q) || q < 1) q = 1;
+    q = Math.min(99, q);
+    return { type: 'multi', unit: unit === 'serving' ? 'serving' : 'day', total: q, left: q };
+  }
+  function buildRow(name, store, expiry, portion) {
+    var p = portion || { type: 'once', unit: 'day', total: 1, left: 1 };
+    var hasQty = p.type === 'multi';
+    var row = document.createElement('div');
+    row.className = 'link-row';
+    row.innerHTML =
+      '<div class="lr-top">' +
+        '<input type="text" class="lr-name" maxlength="30" placeholder="재료명 (예: 대파)" value="' + esc(name || '') + '" aria-label="재료명">' +
+        '<button type="button" class="lr-del" aria-label="품목 빼기">✕</button>' +
+      '</div>' +
+      '<div class="seg" role="group" aria-label="보관 위치">' + segHtml(store || 'fridge') + '</div>' +
+      '<label class="lr-date"><span>소비기한</span><input type="date" class="lr-exp" value="' + esc(expiry || '') + '" aria-label="소비기한"></label>' +
+      '<div class="lr-portion">' +
+        '<span>분량</span>' +
+        '<div class="seg-sm lr-ptype" role="group" aria-label="1회성 또는 여러 번">' +
+          '<button type="button" data-ptype="once"' + (hasQty ? '' : ' class="on"') + '>1회성</button>' +
+          '<button type="button" data-ptype="multi"' + (hasQty ? ' class="on"' : '') + '>여러 번</button>' +
+        '</div>' +
+        '<input type="number" class="lr-qty" value="' + (hasQty ? p.total : 3) + '" min="1" max="99" inputmode="numeric" aria-label="분량 숫자"' + (hasQty ? '' : ' hidden') + '>' +
+        '<div class="seg-sm lr-punit" role="group" aria-label="분량 단위"' + (hasQty ? '' : ' hidden') + '>' +
+          '<button type="button" data-punit="day"' + (hasQty && p.unit === 'day' ? ' class="on"' : '') + '>일치</button>' +
+          '<button type="button" data-punit="serving"' + (hasQty && p.unit === 'serving' ? ' class="on"' : '') + '>회</button>' +
+        '</div>' +
+      '</div>';
+    row.querySelector('.lr-name').addEventListener('input', function () { linkRowsDirty = true; updateLinkHint(); });
+    row.querySelector('.seg').addEventListener('click', function (ev) {
+      var b = ev.target.closest ? ev.target.closest('button[data-store]') : null;
+      if (!b) return;
+      var btns = this.querySelectorAll('button');
+      for (var i = 0; i < btns.length; i++) btns[i].classList.remove('on');
+      b.classList.add('on');
+      linkRowsDirty = true;
+    });
+    row.querySelector('.lr-ptype').addEventListener('click', function (ev) {
+      var b = ev.target.closest ? ev.target.closest('button[data-ptype]') : null;
+      if (!b) return;
+      var btns = this.querySelectorAll('button');
+      for (var i = 0; i < btns.length; i++) btns[i].classList.remove('on');
+      b.classList.add('on');
+      var multi = b.getAttribute('data-ptype') === 'multi';
+      row.querySelector('.lr-qty').hidden = !multi;
+      var punit = row.querySelector('.lr-punit');
+      punit.hidden = !multi;
+      if (multi) {
+        var ub = punit.querySelectorAll('button');
+        var any = false;
+        for (var k = 0; k < ub.length; k++) { if (ub[k].classList.contains('on')) any = true; }
+        if (!any) ub[0].classList.add('on');
+      }
+      linkRowsDirty = true;
+      updateLinkHint();
+    });
+    row.querySelector('.lr-punit').addEventListener('click', function (ev) {
+      var b = ev.target.closest ? ev.target.closest('button[data-punit]') : null;
+      if (!b) return;
+      var btns = this.querySelectorAll('button');
+      for (var i = 0; i < btns.length; i++) btns[i].classList.remove('on');
+      b.classList.add('on');
+      linkRowsDirty = true;
+      updateLinkHint();
+    });
+    row.querySelector('.lr-del').addEventListener('click', function () {
+      linkRowsDirty = true;
+      if ($('linkRows').children.length <= 1) {
+        row.querySelector('.lr-name').value = '';
+        row.querySelector('.lr-exp').value = '';
+      } else {
+        row.parentNode.removeChild(row);
+      }
+      updateLinkHint();
+    });
+    return row;
+  }
+  function renderLinkRows(items) {
+    var box = $('linkRows');
+    box.innerHTML = '';
+    var list = items && items.length ? items : [{ name: '', store: 'fridge', expiry: '', portion: null }];
+    list.forEach(function (it) {
+      box.appendChild(buildRow(it.name, it.store, it.expiry, it.portion));
+    });
+  }
+  function lastRowStore() {
+    var row = $('linkRows').lastElementChild;
+    var on = row ? row.querySelector('.seg button.on') : null;
+    return on ? on.getAttribute('data-store') : 'fridge';
+  }
+  function addLinkRow() {
+    $('linkRows').appendChild(buildRow('', lastRowStore(), '', null));
+    var inputs = $('linkRows').querySelectorAll('.lr-name');
+    var last = inputs[inputs.length - 1];
+    if (last) last.focus();
+    linkRowsDirty = true;
+  }
+  function rowPortion(row) {
+    var pt = row.querySelector('.lr-ptype button.on');
+    var type = pt ? pt.getAttribute('data-ptype') : 'once';
+    if (type !== 'multi') return { type: 'once', unit: 'day', total: 1, left: 1 };
+    var q = Math.round(Number(row.querySelector('.lr-qty').value));
+    if (!isFinite(q) || q < 1) q = 1;
+    q = Math.min(99, q);
+    var un = row.querySelector('.lr-punit button.on');
+    var unit = un && un.getAttribute('data-punit') === 'serving' ? 'serving' : 'day';
+    return { type: 'multi', unit: unit, total: q, left: q };
+  }
+  function collectLinkItems() {
+    var out = [];
+    var rows = $('linkRows').querySelectorAll('.link-row');
+    for (var i = 0; i < rows.length; i++) {
+      var nm = rows[i].querySelector('.lr-name').value.trim();
+      if (!nm) continue;
+      var on = rows[i].querySelector('.seg button.on');
+      var ex = rows[i].querySelector('.lr-exp').value || '';
+      if (ex && !/^\d{4}-\d{2}-\d{2}$/.test(ex)) ex = '';
+      out.push({
+        name: nm.slice(0, 30),
+        storage: on ? on.getAttribute('data-store') : 'fridge',
+        expiry: ex,
+        portion: rowPortion(rows[i])
+      });
+    }
+    return out;
+  }
+  function plannedLinkItems() {
+    var named = collectLinkItems();
+    if (named.length) return named;
+    return autoItems($('expTitle').value).map(function (n) {
+      return { name: n, storage: 'fridge', expiry: '', portion: { type: 'once', unit: 'day', total: 1, left: 1 } };
+    });
+  }
+  function updateLinkHint() {
+    var hint = $('linkHint');
+    if (!hint) return;
+    if (selCat !== 'grocery' || !linkOn) { hint.textContent = ''; return; }
+    var items = plannedLinkItems();
+    if (!items.length) {
+      hint.textContent = '재료명을 적으면 냉장고에도 함께 들어가요. 내역을 ‘대파, 두부’처럼 쉼표로 나눠 적어도 돼요.';
+      return;
+    }
+    var names = items.slice(0, 4).map(function (it) { return it.name; }).join(', ');
+    if (items.length > 4) names += ' 외 ' + (items.length - 4) + '개';
+    hint.innerHTML = '🧊 저장하면 <b>' + esc(names) + '</b>(' + items.length + '개)를 냉장고 보드에 넣어요.';
+  }
+  function syncLinkPanel() {
+    var show = selCat === 'grocery';
+    $('fridgeLink').hidden = !show;
+    if (!show) return;
+    $('linkToggle').checked = linkOn;
+    $('linkBody').hidden = !linkOn;
+    $('linkOffHint').hidden = linkOn;
+    if (!linkOn) return;
+    if (!linkRowsDirty) {
+      var items = autoItems($('expTitle').value).map(function (n) {
+        return { name: n, store: 'fridge', expiry: '', portion: null };
+      });
+      renderLinkRows(items);
+    }
+    updateLinkHint();
+  }
+  function resetLinkPanel() {
+    linkOn = true;
+    linkRowsDirty = false;
+    renderLinkRows([]);
+    syncLinkPanel();
+  }
+  function syncFrPortion() {
+    var btns = $('frPTypeSeg').querySelectorAll('button');
+    for (var i = 0; i < btns.length; i++) btns[i].classList.toggle('on', btns[i].getAttribute('data-ptype') === frPType);
+    var ubs = $('frUnitSeg').querySelectorAll('button');
+    for (var k = 0; k < ubs.length; k++) ubs[k].classList.toggle('on', ubs[k].getAttribute('data-punit') === frUnit);
+    $('frQtyWrap').hidden = frPType !== 'multi';
   }
 
   /* ---------------- toast ---------------- */
@@ -852,30 +1293,130 @@
   }
 
   /* ---------------- actions ---------------- */
-  function addExpense(date, title, category, amount) {
+  function expById(id) {
+    for (var i = 0; i < state.expenses.length; i++) { if (state.expenses[i].id === id) return state.expenses[i]; }
+    return null;
+  }
+  function linkedFridgeOf(expId) {
+    return state.fridge.filter(function (f) { return f.linkedExpenseId === expId; });
+  }
+  function addExpense(date, title, category, amount, linkItems) {
     var item = {
       id: newId('e'), date: date, title: title, category: category,
-      amount: amount, createdAt: Date.now(), sample: false
+      amount: amount, createdAt: Date.now(), sample: false, fridgeLinked: 0
     };
     state.expenses.push(item);
+    var added = 0;
+    (linkItems || []).forEach(function (li) {
+      var nm = li && typeof li.name === 'string' ? li.name.trim() : '';
+      if (!nm) return;
+      state.fridge.push({
+        id: newId('f'), name: nm.slice(0, 30),
+        storage: li.storage || 'fridge',
+        expiry: li.expiry || '',
+        memo: '', createdAt: Date.now() + added,
+        sample: false, linkedExpenseId: item.id,
+        portion: cleanPortion(li.portion)
+      });
+      added++;
+    });
+    item.fridgeLinked = added;
     if (date.slice(0, 7) !== viewMonth) {
       viewMonth = date.slice(0, 7);
     }
     save();
     renderAll();
+    return added;
   }
-  function deleteExpense(id) {
+  function deleteExpense(id, withFridge) {
     var idx = -1;
     for (var i = 0; i < state.expenses.length; i++) { if (state.expenses[i].id === id) { idx = i; break; } }
     if (idx < 0) return;
     var item = state.expenses.splice(idx, 1)[0];
+    var removedFridge = [];
+    var unlinked = [];
+    if (withFridge) {
+      removedFridge = linkedFridgeOf(id);
+      state.fridge = state.fridge.filter(function (f) { return f.linkedExpenseId !== id; });
+    } else {
+      state.fridge.forEach(function (f) {
+        if (f.linkedExpenseId === id) { unlinked.push(f.id); f.linkedExpenseId = ''; }
+      });
+    }
     save();
     renderAll();
-    toast(won(item.amount) + ' 기록을 지웠어요', '실행 취소', function () {
+    var msg = won(item.amount) + ' 기록을 지웠어요';
+    if (removedFridge.length) msg += ' · 냉장고 ' + removedFridge.length + '개도 함께';
+    else if (unlinked.length) msg += ' · 재료 ' + unlinked.length + '개는 냉장고에 남겼어요';
+    toast(msg, '실행 취소', function () {
       state.expenses.splice(Math.min(idx, state.expenses.length), 0, item);
+      removedFridge.forEach(function (f) { state.fridge.push(f); });
+      unlinked.forEach(function (fid) {
+        for (var k = 0; k < state.fridge.length; k++) {
+          if (state.fridge[k].id === fid && !state.fridge[k].linkedExpenseId) state.fridge[k].linkedExpenseId = id;
+        }
+      });
       save();
       renderAll();
     });
+  }
+  function requestDeleteExpense(id) {
+    var linked = linkedFridgeOf(id);
+    if (!linked.length) { deleteExpense(id, false); return; }
+    var names = linked.slice(0, 3).map(function (f) { return f.name; }).join(', ');
+    if (linked.length > 3) names += ' 외 ' + (linked.length - 3) + '개';
+    $('confirmTitle').textContent = '장보기 기록을 지울까요?';
+    $('confirmBody').textContent = '이 장보기로 냉장고에 넣은 재료 ' + linked.length +
+      '건(' + names + ')이 아직 남아 있어요. 함께 지우면 냉장고 보드에서도 사라져요.';
+    var alt = $('confirmAlt');
+    alt.hidden = false;
+    alt.textContent = '지출만 지우기';
+    alt.onclick = function () { closeConfirm(); deleteExpense(id, false); };
+    $('confirmOk').textContent = '함께 지우기';
+    $('confirmOk').onclick = function () { closeConfirm(); deleteExpense(id, true); };
+    $('confirmModal').querySelector('.modal-actions').classList.add('stack');
+    $('confirmModal').hidden = false;
+    document.body.classList.add('no-scroll');
+  }
+  function focusExpense(id) {
+    var e = expById(id);
+    if (!e) return;
+    if (e.date.slice(0, 7) !== viewMonth) viewMonth = e.date.slice(0, 7);
+    expFilter = 'all';
+    setView('expense');
+    renderSummary();
+    renderExpenses();
+    setTimeout(function () {
+      var row = document.querySelector('[data-exp-row="' + id + '"]');
+      if (!row) return;
+      if (row.scrollIntoView) row.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      row.classList.add('flash');
+      setTimeout(function () { row.classList.remove('flash'); }, 1700);
+    }, 140);
+  }
+  function changePortion(id, delta) {
+    var f = fridgeById(id);
+    if (!f) return;
+    var p = f.portion;
+    if (p.type !== 'multi') { if (delta < 0) eatFridge(id); return; }
+    if (delta < 0) {
+      if (p.left <= 1) { eatFridge(id); return; }
+      p.left -= 1;
+      save();
+      renderAll();
+      toast('‘' + f.name + '’ ' + p.left + unitLabel(p.unit) + ' 남았어요', '실행 취소', function () {
+        p.left += 1;
+        save();
+        renderAll();
+      });
+      return;
+    }
+    if (p.left >= 99) return;
+    p.left += 1;
+    if (p.left > p.total) p.total = p.left;
+    save();
+    renderAll();
+    toast('‘' + f.name + '’ ' + p.left + unitLabel(p.unit) + '로 늘렸어요');
   }
   function eatFridge(id) {
     var idx = -1;
@@ -931,7 +1472,12 @@
     viewMonth = todayKey().slice(0, 7);
     expFilter = 'all';
     fridgeFilter = 'all';
+    frPType = 'once';
+    frUnit = 'day';
+    $('frQty').value = '3';
     $('budgetInput').value = DEFAULT_BUDGET;
+    resetLinkPanel();
+    syncFrPortion();
     renderAll();
     toast('모든 기록을 지웠어요');
   }
@@ -1016,6 +1562,10 @@
     document.body.classList.remove('no-scroll');
   }
   function openConfirm(title, body, okLabel, onOk) {
+    var alt = $('confirmAlt');
+    alt.hidden = true;
+    alt.onclick = null;
+    $('confirmModal').querySelector('.modal-actions').classList.remove('stack');
     $('confirmTitle').textContent = title;
     $('confirmBody').textContent = body;
     $('confirmOk').textContent = okLabel;
@@ -1027,13 +1577,93 @@
     $('confirmModal').hidden = false;
     document.body.classList.add('no-scroll');
   }
-  function closeConfirm() { $('confirmModal').hidden = true; document.body.classList.remove('no-scroll'); }
+  function closeConfirm() {
+    $('confirmModal').hidden = true;
+    var alt = $('confirmAlt');
+    alt.hidden = true;
+    alt.onclick = null;
+    $('confirmModal').querySelector('.modal-actions').classList.remove('stack');
+    document.body.classList.remove('no-scroll');
+  }
   function openImport() {
     $('importText').value = '';
     $('importModal').hidden = false;
     document.body.classList.add('no-scroll');
   }
   function closeImport() { $('importModal').hidden = true; document.body.classList.remove('no-scroll'); }
+
+  /* ---------------- fridge edit ---------------- */
+  function syncEditUI() {
+    var sb = $('edStoreChips').querySelectorAll('.chip');
+    for (var i = 0; i < sb.length; i++) {
+      var on = sb[i].getAttribute('data-store') === edStore;
+      sb[i].classList.toggle('active', on);
+      sb[i].setAttribute('aria-pressed', on ? 'true' : 'false');
+    }
+    var pb = $('edPTypeSeg').querySelectorAll('button');
+    for (var k = 0; k < pb.length; k++) pb[k].classList.toggle('on', pb[k].getAttribute('data-ptype') === edPType);
+    var ub = $('edUnitSeg').querySelectorAll('button');
+    for (var u = 0; u < ub.length; u++) ub[u].classList.toggle('on', ub[u].getAttribute('data-punit') === edUnit);
+    $('edQtyRow').hidden = edPType !== 'multi';
+    var labels = $('editModal').querySelectorAll('.ed-unit');
+    for (var l = 0; l < labels.length; l++) labels[l].textContent = unitLabel(edUnit);
+  }
+  function openEdit(id) {
+    var f = fridgeById(id);
+    if (!f) return;
+    editId = id;
+    edStore = f.storage;
+    edPType = f.portion.type;
+    edUnit = f.portion.unit;
+    $('edName').value = f.name;
+    $('edExpiry').value = f.expiry || '';
+    $('edMemo').value = f.memo || '';
+    $('edLeft').value = String(f.portion.left);
+    $('edTotal').value = String(f.portion.total);
+    syncEditUI();
+    $('editModal').hidden = false;
+    document.body.classList.add('no-scroll');
+  }
+  function closeEdit() {
+    $('editModal').hidden = true;
+    editId = null;
+    document.body.classList.remove('no-scroll');
+  }
+  function saveEdit() {
+    var f = editId ? fridgeById(editId) : null;
+    if (!f) { closeEdit(); return; }
+    var name = $('edName').value.trim();
+    if (!name) { toast('재료 이름을 적어 주세요'); $('edName').focus(); return; }
+    var expiry = $('edExpiry').value || '';
+    if (expiry && !/^\d{4}-\d{2}-\d{2}$/.test(expiry)) expiry = '';
+    var p;
+    if (edPType === 'multi') {
+      var total = Math.round(Number($('edTotal').value));
+      var left = Math.round(Number($('edLeft').value));
+      if (!isFinite(total) || total < 1) total = 1;
+      total = Math.min(99, total);
+      if (!isFinite(left)) left = total;
+      left = Math.max(0, Math.min(99, left));
+      if (left > total) total = left;
+      p = { type: 'multi', unit: edUnit, total: total, left: left };
+    } else {
+      p = { type: 'once', unit: 'day', total: 1, left: 1 };
+    }
+    f.name = name.slice(0, 30);
+    f.storage = edStore;
+    f.expiry = expiry;
+    f.memo = $('edMemo').value.trim().slice(0, 60);
+    f.portion = p;
+    if (p.type === 'multi' && p.left <= 0) {
+      closeEdit();
+      eatFridge(f.id);
+      return;
+    }
+    save();
+    renderAll();
+    closeEdit();
+    toast('‘' + f.name + '’ 수정했어요 · ' + portionText(p));
+  }
 
   /* ---------------- views ---------------- */
   function setView(v) {
@@ -1086,6 +1716,8 @@
     $('expDate').value = todayKey();
     updateTodayLabel();
     syncChips();
+    resetLinkPanel();
+    syncFrPortion();
 
     // tabs
     var tabs = document.querySelectorAll('.tabbar button');
@@ -1121,6 +1753,7 @@
       catBtns[c].addEventListener('click', function () {
         selCat = this.getAttribute('data-cat');
         syncChips();
+        syncLinkPanel();
       });
     }
     // store chips
@@ -1131,6 +1764,29 @@
         syncChips();
       });
     }
+    // grocery → fridge link
+    $('linkToggle').addEventListener('change', function () {
+      linkOn = this.checked;
+      syncLinkPanel();
+    });
+    $('addRowBtn').addEventListener('click', addLinkRow);
+    $('expTitle').addEventListener('input', function () {
+      clearTimeout(titleTimer);
+      titleTimer = setTimeout(function () { if (!linkRowsDirty) syncLinkPanel(); }, 260);
+    });
+    // fridge portion chips
+    $('frPTypeSeg').addEventListener('click', function (ev) {
+      var b = ev.target.closest ? ev.target.closest('button[data-ptype]') : null;
+      if (!b) return;
+      frPType = b.getAttribute('data-ptype');
+      syncFrPortion();
+    });
+    $('frUnitSeg').addEventListener('click', function (ev) {
+      var b = ev.target.closest ? ev.target.closest('button[data-punit]') : null;
+      if (!b) return;
+      frUnit = b.getAttribute('data-punit');
+      syncFrPortion();
+    });
     // expense submit
     $('expenseForm').addEventListener('submit', function (ev) {
       ev.preventDefault();
@@ -1140,10 +1796,16 @@
       var amount = Math.round(Number($('expAmount').value));
       if (!title) { toast('내역을 적어 주세요'); $('expTitle').focus(); return; }
       if (!isFinite(amount) || amount <= 0) { toast('금액을 입력해 주세요'); $('expAmount').focus(); return; }
-      addExpense(date, title, selCat, amount);
+      var linkItems = (selCat === 'grocery' && linkOn) ? plannedLinkItems() : [];
+      var added = addExpense(date, title, selCat, amount, linkItems);
       $('expTitle').value = '';
       $('expAmount').value = '';
-      toast(won(amount) + ' 기록했어요');
+      resetLinkPanel();
+      if (added > 0) {
+        toast(won(amount) + ' 기록 · 냉장고에 ' + added + '개 넣었어요', '냉장고 보기', function () { setView('fridge'); });
+      } else {
+        toast(won(amount) + ' 기록했어요');
+      }
     });
     // fridge submit
     $('fridgeForm').addEventListener('submit', function (ev) {
@@ -1152,16 +1814,22 @@
       if (!name) { toast('재료 이름을 적어 주세요'); $('frName').focus(); return; }
       var expiry = $('frExpiry').value || '';
       if (expiry && !/^\d{4}-\d{2}-\d{2}$/.test(expiry)) expiry = '';
+      var portion = buildPortion(frPType, frUnit, $('frQty').value);
       state.fridge.push({
         id: newId('f'), name: name, storage: selStore, expiry: expiry,
-        memo: $('frMemo').value.trim(), createdAt: Date.now(), sample: false
+        memo: $('frMemo').value.trim(), createdAt: Date.now(), sample: false,
+        linkedExpenseId: '', portion: portion
       });
       save();
       renderAll();
       $('frName').value = '';
       $('frExpiry').value = '';
       $('frMemo').value = '';
-      var msg = '‘' + name + '’ 넣었어요';
+      frPType = 'once';
+      frUnit = 'day';
+      $('frQty').value = '3';
+      syncFrPortion();
+      var msg = '‘' + name + '’ 넣었어요 · ' + portionText(portion);
       if (expiry) {
         var u = urgencyOf(expiry);
         msg += ' · ' + (u.diff === null ? '' : u.text);
@@ -1170,14 +1838,37 @@
     });
     // list delegation
     $('expList').addEventListener('click', function (ev) {
-      var btn = ev.target.closest ? ev.target.closest('[data-del-exp]') : null;
-      if (btn) deleteExpense(btn.getAttribute('data-del-exp'));
+      var btn = ev.target.closest ? ev.target.closest('[data-del-exp],[data-goto-fridge]') : null;
+      if (!btn) return;
+      if (btn.hasAttribute('data-goto-fridge')) { setView('fridge'); return; }
+      requestDeleteExpense(btn.getAttribute('data-del-exp'));
     });
     $('fridgeList').addEventListener('click', function (ev) {
-      var target = ev.target.closest ? ev.target.closest('[data-eat],[data-del-fridge]') : null;
+      if (lpFired) { lpFired = false; return; }
+      var target = ev.target.closest ? ev.target.closest('[data-eat],[data-del-fridge],[data-edit-fridge],[data-portion-minus],[data-portion-plus],[data-goto-exp]') : null;
       if (!target) return;
       if (target.hasAttribute('data-eat')) eatFridge(target.getAttribute('data-eat'));
+      else if (target.hasAttribute('data-edit-fridge')) openEdit(target.getAttribute('data-edit-fridge'));
+      else if (target.hasAttribute('data-portion-minus')) changePortion(target.getAttribute('data-portion-minus'), -1);
+      else if (target.hasAttribute('data-portion-plus')) changePortion(target.getAttribute('data-portion-plus'), 1);
+      else if (target.hasAttribute('data-goto-exp')) focusExpense(target.getAttribute('data-goto-exp'));
       else deleteFridge(target.getAttribute('data-del-fridge'));
+    });
+    // 길게 누르면 수정 (iOS 텍스트 선택 방지)
+    $('fridgeList').addEventListener('touchstart', function (ev) {
+      var card = ev.target.closest ? ev.target.closest('.fridge-item') : null;
+      if (!card) return;
+      var id = card.getAttribute('data-fridge-id');
+      lpFired = false;
+      clearTimeout(lpTimer);
+      lpTimer = setTimeout(function () { lpFired = true; openEdit(id); }, 480);
+    }, { passive: true });
+    $('fridgeList').addEventListener('touchend', function () { clearTimeout(lpTimer); });
+    $('fridgeList').addEventListener('touchmove', function () { clearTimeout(lpTimer); });
+    $('fridgeList').addEventListener('touchcancel', function () { clearTimeout(lpTimer); });
+    $('fridgeList').addEventListener('contextmenu', function (ev) {
+      var card = ev.target.closest ? ev.target.closest('.fridge-item') : null;
+      if (card) ev.preventDefault();
     });
     $('expFilters').addEventListener('click', function (ev) {
       var btn = ev.target.closest ? ev.target.closest('[data-filter]') : null;
@@ -1213,6 +1904,31 @@
     $('clearSampleInline').addEventListener('click', function () { clearSamples(true); });
     // confirm modal
     $('confirmCancel').addEventListener('click', closeConfirm);
+    // edit modal
+    $('editCancel').addEventListener('click', closeEdit);
+    $('editSave').addEventListener('click', saveEdit);
+    $('edStoreChips').addEventListener('click', function (ev) {
+      var b = ev.target.closest ? ev.target.closest('button[data-store]') : null;
+      if (!b) return;
+      edStore = b.getAttribute('data-store');
+      syncEditUI();
+    });
+    $('edPTypeSeg').addEventListener('click', function (ev) {
+      var b = ev.target.closest ? ev.target.closest('button[data-ptype]') : null;
+      if (!b) return;
+      edPType = b.getAttribute('data-ptype');
+      if (edPType === 'multi' && Number($('edTotal').value) <= 1) {
+        $('edTotal').value = '3';
+        $('edLeft').value = '3';
+      }
+      syncEditUI();
+    });
+    $('edUnitSeg').addEventListener('click', function (ev) {
+      var b = ev.target.closest ? ev.target.closest('button[data-punit]') : null;
+      if (!b) return;
+      edUnit = b.getAttribute('data-punit');
+      syncEditUI();
+    });
     // import modal
     $('importCancel').addEventListener('click', closeImport);
     $('importOk').addEventListener('click', function () { applyImport($('importText').value); });
@@ -1232,6 +1948,7 @@
     document.addEventListener('keydown', function (ev) {
       if (ev.key !== 'Escape') return;
       if (!$('confirmModal').hidden) { closeConfirm(); return; }
+      if (!$('editModal').hidden) { closeEdit(); return; }
       if (!$('importModal').hidden) { closeImport(); return; }
       if ($('sheet').classList.contains('open')) closeSheet();
     });
