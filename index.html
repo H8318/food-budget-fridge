@@ -90,15 +90,27 @@
 
   /* ---------- forms ---------- */
   .form{display:flex;flex-direction:column;gap:12px}
-  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .row2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
   .field{display:flex;flex-direction:column;gap:6px;min-width:0}
   .field>span{font-size:12px;font-weight:800;color:#8C7D71;letter-spacing:.01em}
-  .field input{min-height:48px;width:100%;padding:0 13px;border:1.5px solid var(--line);border-radius:13px;background:#FDFBF9;font-size:16px}
+  .field input{min-height:48px;width:100%;min-width:0;padding:0 13px;border:1.5px solid var(--line);border-radius:13px;background:#FDFBF9;font-size:16px}
   .field input::placeholder{color:#BCB0A4}
   .field input:focus{outline:none;border-color:var(--accent);background:#fff}
   .money-input{position:relative}
   .money-input input{padding-right:30px;text-align:right;font-weight:800}
   .money-input .unit{position:absolute;right:13px;top:50%;transform:translateY(-50%);font-size:13px;font-weight:700;color:#A99C90}
+  /* 금액은 항상 맨 위, 한 줄 전체를 쓰는 큰 입력란으로 고정 (아이폰 date 입력란이 옆 칸을 덮지 않도록) */
+  .amount-field{gap:7px}
+  .amount-field input{
+    min-height:62px;padding:0 44px 0 16px;font-size:28px;font-weight:800;letter-spacing:-.03em;
+    background:#FFF8F2;border-color:#F4CDB6;color:#3B2417;
+  }
+  .amount-field input::placeholder{color:#DCC9B9}
+  .amount-field input:focus{background:#fff;border-color:var(--accent)}
+  .amount-field .money-input .unit{right:16px;font-size:16px;font-weight:800;color:#A2603A}
+  /* 날짜는 금액 칸을 밀어내지 않도록 한 줄에 라벨 + 입력으로 배치 */
+  .date-field{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:10px}
+  .date-field input{min-height:46px;text-align:right;padding:0 12px}
   .chips{display:flex;gap:6px;flex-wrap:wrap}
   .chip{min-height:44px;padding:0 12px;border-radius:12px;border:1.5px solid var(--line);background:#FDFBF9;display:flex;align-items:center;gap:4px;font-size:13px;font-weight:700;color:#7C6E62;flex:0 0 auto}
   .chips-scroll{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;margin-bottom:10px;-webkit-overflow-scrolling:touch}
@@ -379,22 +391,20 @@
       <span class="sub">쓴 돈은 바로 반영돼요</span>
     </div>
     <form class="card form" id="expenseForm" autocomplete="off" novalidate>
-      <div class="row2">
-        <label class="field">
-          <span>날짜</span>
-          <input type="date" id="expDate">
-        </label>
-        <label class="field">
-          <span>금액</span>
-          <div class="money-input">
-            <input type="number" id="expAmount" inputmode="numeric" min="0" placeholder="0">
-            <span class="unit">원</span>
-          </div>
-        </label>
-      </div>
+      <label class="field amount-field" for="expAmount">
+        <span>금액</span>
+        <div class="money-input">
+          <input type="text" id="expAmount" inputmode="numeric" pattern="[0-9]*" maxlength="11" placeholder="0" enterkeyhint="done" aria-label="금액 (원)">
+          <span class="unit">원</span>
+        </div>
+      </label>
       <label class="field">
         <span>내역</span>
         <input type="text" id="expTitle" maxlength="40" placeholder="예: 이마트 장보기, 김치찌개">
+      </label>
+      <label class="field date-field">
+        <span>날짜</span>
+        <input type="date" id="expDate">
       </label>
       <div class="field">
         <span>카테고리</span>
@@ -609,22 +619,20 @@
     <h3 id="expEditTitle">지출 수정</h3>
     <p>날짜·금액·내역·카테고리를 고칠 수 있어요.</p>
     <div class="form" style="gap:11px">
-      <div class="row2">
-        <label class="field">
-          <span>날짜</span>
-          <input type="date" id="exxDate">
-        </label>
-        <label class="field">
-          <span>금액</span>
-          <div class="money-input">
-            <input type="number" id="exxAmount" inputmode="numeric" min="0" placeholder="0">
-            <span class="unit">원</span>
-          </div>
-        </label>
-      </div>
+      <label class="field amount-field" for="exxAmount">
+        <span>금액</span>
+        <div class="money-input">
+          <input type="text" id="exxAmount" inputmode="numeric" pattern="[0-9]*" maxlength="11" placeholder="0" aria-label="금액 (원)">
+          <span class="unit">원</span>
+        </div>
+      </label>
       <label class="field">
         <span>내역</span>
         <input type="text" id="exxTitle" maxlength="40" placeholder="예: 이마트 장보기">
+      </label>
+      <label class="field date-field">
+        <span>날짜</span>
+        <input type="date" id="exxDate">
       </label>
       <div class="field">
         <span>카테고리</span>
@@ -710,6 +718,33 @@
       Date.UTC(a.getFullYear(), a.getMonth(), a.getDate())) / 86400000);
   }
   function won(n) { return nf.format(Math.round(n)) + '원'; }
+  /* 금액 입력: 숫자만 받아 콤마를 찍어 주고, 읽을 땐 숫자만 꺼낸다 */
+  function digitsOf(s) { return String(s == null ? '' : s).replace(/[^0-9]/g, ''); }
+  function amountOf(id) {
+    var v = digitsOf($(id).value).slice(0, 9);
+    return v ? Math.round(Number(v)) : 0;
+  }
+  function bindAmountInput(id) {
+    var el = $(id);
+    el.addEventListener('input', function () {
+      var before = el.value.slice(0, el.selectionStart == null ? el.value.length : el.selectionStart);
+      var digitsBefore = digitsOf(before).length;
+      var digits = digitsOf(el.value).slice(0, 9);
+      var pretty = digits ? nf.format(Number(digits)) : '';
+      if (pretty !== el.value) {
+        el.value = pretty;
+        var pos = 0, seen = 0;
+        while (pos < pretty.length && seen < digitsBefore) {
+          if (/[0-9]/.test(pretty.charAt(pos))) seen++;
+          pos++;
+        }
+        try { el.setSelectionRange(pos, pos); } catch (e) {}
+      }
+    });
+    el.addEventListener('blur', function () {
+      el.value = amountOf(id) ? nf.format(amountOf(id)) : '';
+    });
+  }
   function esc(s) {
     return String(s).replace(/[&<>"']/g, function (c) {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
@@ -1808,7 +1843,7 @@
     expEditId = id;
     edxCat = e.category;
     $('exxDate').value = e.date;
-    $('exxAmount').value = String(e.amount);
+    $('exxAmount').value = nf.format(e.amount);
     $('exxTitle').value = e.title;
     syncExpEditUI();
     $('expEditModal').hidden = false;
@@ -1825,8 +1860,7 @@
     if (!e) { closeExpEdit(); return; }
     var title = $('exxTitle').value.trim();
     if (!title) { toast('내역을 적어 주세요'); $('exxTitle').focus(); return; }
-    if ($('exxAmount').validity && $('exxAmount').validity.badInput) { toast('금액을 숫자로 적어 주세요'); $('exxAmount').focus(); return; }
-    var amount = Math.round(Number($('exxAmount').value));
+    var amount = amountOf('exxAmount');
     if (!isFinite(amount) || amount <= 0) { toast('금액은 0원보다 커야 해요'); $('exxAmount').focus(); return; }
     amount = Math.min(999999999, amount);
     var date = $('exxDate').value || e.date;
@@ -1914,6 +1948,8 @@
     if (!state.seeded) { seedSamples(); save(); }
     viewMonth = todayKey().slice(0, 7);
     $('expDate').value = todayKey();
+    bindAmountInput('expAmount');
+    bindAmountInput('exxAmount');
     fridgeView = loadFridgeView();
     updateTodayLabel();
     syncChips();
@@ -1995,7 +2031,7 @@
       var date = $('expDate').value || todayKey();
       if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) date = todayKey();
       var title = $('expTitle').value.trim();
-      var amount = Math.round(Number($('expAmount').value));
+      var amount = amountOf('expAmount');
       if (!title) { toast('내역을 적어 주세요'); $('expTitle').focus(); return; }
       if (!isFinite(amount) || amount <= 0) { toast('금액을 입력해 주세요'); $('expAmount').focus(); return; }
       var badDate = $('expenseForm').querySelector('.lr-exp:invalid, #expDate:invalid');
