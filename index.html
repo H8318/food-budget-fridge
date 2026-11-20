@@ -1742,6 +1742,7 @@
   function closeEdit() {
     $('editModal').hidden = true;
     editId = null;
+    lpFired = false;
     document.body.classList.remove('no-scroll');
   }
   function saveEdit() {
@@ -1816,6 +1817,7 @@
   function closeExpEdit() {
     $('expEditModal').hidden = true;
     expEditId = null;
+    lpExpFired = false;
     document.body.classList.remove('no-scroll');
   }
   function saveExpEdit() {
