@@ -337,7 +337,7 @@
       <h2>빠른 기록</h2>
       <span class="sub">쓴 돈은 바로 반영돼요</span>
     </div>
-    <form class="card form" id="expenseForm" autocomplete="off">
+    <form class="card form" id="expenseForm" autocomplete="off" novalidate>
       <div class="row2">
         <label class="field">
           <span>날짜</span>
@@ -400,7 +400,7 @@
       <h2>재료 넣기</h2>
       <span class="sub">소비기한을 비우면 기한 없음</span>
     </div>
-    <form class="card form" id="fridgeForm" autocomplete="off">
+    <form class="card form" id="fridgeForm" autocomplete="off" novalidate>
       <label class="field">
         <span>재료명</span>
         <input type="text" id="frName" maxlength="30" placeholder="예: 그릭요거트, 대파">
@@ -1634,6 +1634,7 @@
     if (!f) { closeEdit(); return; }
     var name = $('edName').value.trim();
     if (!name) { toast('재료 이름을 적어 주세요'); $('edName').focus(); return; }
+    if ($('edExpiry').validity && $('edExpiry').validity.badInput) { toast('소비기한 날짜를 다시 확인해 주세요'); $('edExpiry').focus(); return; }
     var expiry = $('edExpiry').value || '';
     if (expiry && !/^\d{4}-\d{2}-\d{2}$/.test(expiry)) expiry = '';
     var p;
@@ -1796,6 +1797,8 @@
       var amount = Math.round(Number($('expAmount').value));
       if (!title) { toast('내역을 적어 주세요'); $('expTitle').focus(); return; }
       if (!isFinite(amount) || amount <= 0) { toast('금액을 입력해 주세요'); $('expAmount').focus(); return; }
+      var badDate = $('expenseForm').querySelector('.lr-exp:invalid, #expDate:invalid');
+      if (badDate) { toast('소비기한 날짜를 다시 확인해 주세요'); badDate.focus(); return; }
       var linkItems = (selCat === 'grocery' && linkOn) ? plannedLinkItems() : [];
       var added = addExpense(date, title, selCat, amount, linkItems);
       $('expTitle').value = '';
@@ -1812,6 +1815,7 @@
       ev.preventDefault();
       var name = $('frName').value.trim();
       if (!name) { toast('재료 이름을 적어 주세요'); $('frName').focus(); return; }
+      if ($('frExpiry').validity && $('frExpiry').validity.badInput) { toast('소비기한 날짜를 다시 확인해 주세요'); $('frExpiry').focus(); return; }
       var expiry = $('frExpiry').value || '';
       if (expiry && !/^\d{4}-\d{2}-\d{2}$/.test(expiry)) expiry = '';
       var portion = buildPortion(frPType, frUnit, $('frQty').value);
