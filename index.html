@@ -1034,7 +1034,7 @@
         srcHtml = '<button type="button" class="fi-src" data-goto-exp="' + srcExp.id + '">🛒 ' + esc(st) + ' · ' + fmtMD(srcExp.date) + '</button>';
       }
       var portionTag = p.type === 'multi'
-        ? '<span class="fi-tag">🍽 ' + p.left + unitLabel(p.unit) + ' 남음</span>'
+        ? ''
         : '<span class="fi-tag once">1회성</span>';
       var step = p.type === 'multi'
         ? '<div class="portion-step">' +
