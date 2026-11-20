@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#F8F4EE">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="식비·냉장고">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>식비 &amp; 냉장고 보드</title>
+<style>
+  :root{
+    --bg:#F8F4EE; --surface:#FFFFFF; --ink:#23201C; --muted:#8C8178; --line:#EDE3D8;
+    --accent:#F0663A; --accent-ink:#C2461E; --accent-soft:#FFEDE4;
+    --good:#2E9E6B; --good-soft:#E7F6EE;
+    --warn:#D98411; --warn-soft:#FDF0DC;
+    --bad:#D9452F; --bad-soft:#FDE9E5;
+    --shadow:0 8px 24px rgba(84,58,38,.07);
+    --radius:20px;
+  }
+  *,*::before,*::after{box-sizing:border-box}
+  [hidden]{display:none !important}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink); font-size:16px; line-height:1.45;
+    font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Malgun Gothic","Noto Sans KR",sans-serif;
+    -webkit-font-smoothing:antialiased; -webkit-text-size-adjust:100%;
+    overscroll-behavior-y:none;
+  }
+  body.no-scroll{overflow:hidden}
+  button,input,textarea,select{font:inherit;color:inherit}
+  button{cursor:pointer;border:0;background:none;-webkit-tap-highlight-color:transparent}
+  input,textarea{-webkit-appearance:none;appearance:none}
+  p{margin:0}
+  .wrap{max-width:520px;margin:0 auto;padding:10px 16px calc(104px + env(safe-area-inset-bottom))}
+
+  /* ---------- top bar ---------- */
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 2px 12px}
+  .eyebrow{margin:0;font-size:12.5px;font-weight:700;color:var(--muted);letter-spacing:.01em}
+  .topbar h1{margin:3px 0 0;font-size:21px;font-weight:800;letter-spacing:-.03em}
+  .icon-btn{width:44px;height:44px;border-radius:50%;background:#fff;box-shadow:var(--shadow);display:grid;place-items:center;font-size:19px;color:#7C6E62;flex:0 0 auto}
+  .icon-btn:active{background:#F4EDE5}
+
+  /* ---------- summary ---------- */
+  .summary{
+    position:relative; border-radius:24px; padding:14px 16px 14px;
+    background:linear-gradient(160deg,#FFF8F1 0%,#FFE7D6 100%);
+    border:1px solid #FFDFCA; box-shadow:0 12px 28px rgba(196,112,60,.12);
+  }
+  .sum-head{display:flex;align-items:center;justify-content:center;gap:4px}
+  .month-nav{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;font-size:17px;color:#B0673E;background:rgba(255,255,255,.65)}
+  .month-nav:disabled{opacity:.3}
+  .month-nav:active:not(:disabled){background:#fff}
+  #monthLabel{min-width:112px;text-align:center;font-size:13.5px;font-weight:800;color:#96522C}
+  .sum-label{margin:6px 0 0;text-align:center;font-size:12.5px;font-weight:700;color:#A2603A}
+  .sum-amount{margin:1px 0 10px;text-align:center;font-size:36px;font-weight:800;letter-spacing:-.035em;color:#3B2417;line-height:1.15}
+  .sum-amount span{font-size:19px;font-weight:700;margin-left:1px}
+  .sum-amount.over{color:var(--bad)}
+  .bar{height:10px;border-radius:99px;background:rgba(150,95,60,.15);overflow:hidden}
+  .bar-fill{height:100%;width:0;border-radius:99px;background:var(--good);transition:width .45s ease}
+  .summary[data-status="warn"] .bar-fill{background:var(--warn)}
+  .summary[data-status="over"] .bar-fill{background:var(--bad)}
+  .bar-meta{display:flex;justify-content:space-between;margin-top:6px;font-size:12px;font-weight:700;color:#A2603A}
+  .bar-meta .pct.over{color:var(--bad)}
+  .budget-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:12px;background:rgba(255,255,255,.6);border-radius:14px;padding:6px 12px}
+  .budget-row label{font-size:12.5px;font-weight:700;color:#A2603A}
+  .budget-edit{display:flex;align-items:center;gap:3px;font-size:15px;font-weight:800;color:#3B2417}
+  .budget-edit input{
+    width:104px;padding:8px 0;border:0;border-bottom:1.5px dashed rgba(160,100,60,.45);
+    border-radius:0;background:transparent;text-align:right;font-size:16px;font-weight:800;outline:none;
+  }
+  .budget-edit input:focus{border-bottom-color:var(--accent)}
+  input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  .sum-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+  .sum-stats div{background:rgba(255,255,255,.6);border-radius:14px;padding:8px 12px}
+  .sum-stats span{display:block;font-size:11.5px;font-weight:700;color:#A2603A}
+  .sum-stats strong{font-size:16px;font-weight:800;letter-spacing:-.02em}
+
+  /* ---------- sample note ---------- */
+  .sample-note{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#FFF8E7;border:1px solid #F7E4B4;border-radius:14px;padding:6px 8px 6px 12px;margin:12px 0 0;font-size:12.5px;color:#8A6524}
+  .sample-note span{line-height:1.35}
+  .sample-note button{min-height:44px;padding:0 12px;border-radius:11px;background:#fff;border:1px solid #EFD79E;color:#8A6524;font-size:12.5px;font-weight:800;flex:0 0 auto}
+  .warn-note{display:flex;gap:8px;background:var(--bad-soft);border:1px solid #F6C9C0;border-radius:14px;padding:11px 12px;margin:12px 0 0;font-size:12px;line-height:1.45;color:#A63A26}
+
+  /* ---------- sections ---------- */
+  .section-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin:20px 2px 10px}
+  .section-head h2{margin:0;font-size:15.5px;font-weight:800;letter-spacing:-.01em}
+  .section-head .sub{font-size:12px;font-weight:700;color:#A99C90}
+  .card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}
+
+  /* ---------- forms ---------- */
+  .form{display:flex;flex-direction:column;gap:12px}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .field{display:flex;flex-direction:column;gap:6px;min-width:0}
+  .field>span{font-size:12px;font-weight:800;color:#8C7D71;letter-spacing:.01em}
+  .field input{min-height:48px;width:100%;padding:0 13px;border:1.5px solid var(--line);border-radius:13px;background:#FDFBF9;font-size:16px}
+  .field input::placeholder{color:#BCB0A4}
+  .field input:focus{outline:none;border-color:var(--accent);background:#fff}
+  .money-input{position:relative}
+  .money-input input{padding-right:30px;text-align:right;font-weight:800}
+  .money-input .unit{position:absolute;right:13px;top:50%;transform:translateY(-50%);font-size:13px;font-weight:700;color:#A99C90}
+  .chips{display:flex;gap:6px;flex-wrap:wrap}
+  .chip{min-height:44px;padding:0 12px;border-radius:12px;border:1.5px solid var(--line);background:#FDFBF9;display:flex;align-items:center;gap:4px;font-size:13px;font-weight:700;color:#7C6E62;flex:0 0 auto}
+  .chips-scroll{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;margin-bottom:10px;-webkit-overflow-scrolling:touch}
+  .chips-scroll::-webkit-scrollbar{display:none}
+  .chip.active{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-ink)}
+  .primary{min-height:52px;border-radius:15px;background:var(--accent);color:#fff;font-size:16px;font-weight:800;letter-spacing:-.01em;box-shadow:0 8px 18px rgba(240,102,58,.26);margin-top:2px}
+  .primary:active{transform:scale(.995);background:#E15B31}
+  .hint-line{margin:0;font-size:11.5px;color:#A99C90;text-align:center}
+
+  /* ---------- category summary ---------- */
+  .cat-sum{display:flex;flex-direction:column;gap:12px}
+  .cat-row{display:grid;grid-template-columns:118px 1fr 76px;gap:8px;align-items:center}
+  .cat-row .name{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:800;color:#5C5045;white-space:nowrap;overflow:hidden}
+  .cat-row .c-emoji{width:24px;height:24px;border-radius:8px;display:grid;place-items:center;font-size:13px;flex:0 0 auto}
+  .cat-row .track{height:8px;border-radius:99px;background:#F3EEE8;overflow:hidden}
+  .cat-row .fill{display:block;height:100%;border-radius:99px;transition:width .4s ease}
+  .cat-row .amt{text-align:right;font-size:12.5px;font-weight:800;font-variant-numeric:tabular-nums}
+
+  /* ---------- lists ---------- */
+  .list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+  .day-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:12px 4px 2px;font-size:12px;font-weight:800;color:#9A8B7D}
+  .day-head .day-sum{font-weight:700;color:#B5A899}
+  .exp{display:flex;align-items:center;gap:10px;background:#fff;border-radius:16px;padding:10px 8px 10px 12px;box-shadow:0 4px 14px rgba(84,58,38,.05)}
+  .exp .emoji{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-size:17px;flex:0 0 auto}
+  .exp .body{flex:1;min-width:0}
+  .exp .title{margin:0;font-size:14.5px;font-weight:700;line-height:1.32;word-break:keep-all;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .exp .meta{margin:2px 0 0;font-size:11.5px;font-weight:600;color:var(--muted)}
+  .exp .right{display:flex;align-items:center;gap:2px;flex:0 0 auto}
+  .exp .amt{font-size:14.5px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+  .icon-del{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:14px;color:#C9BCB0}
+  .icon-del:active{background:#FDF0EC;color:var(--bad)}
+
+  /* ---------- fridge ---------- */
+  .pills{display:flex;gap:6px;overflow-x:auto;padding:2px 2px 4px;margin:0 -2px 6px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .pills::-webkit-scrollbar{display:none}
+  .pill{flex:0 0 auto;font-size:11.5px;font-weight:800;padding:7px 10px;border-radius:99px;background:#F1EBE3;color:#7C6E62;white-space:nowrap}
+  .pill.urgent{background:var(--bad-soft);color:var(--bad)}
+  .pill.good{background:var(--good-soft);color:#227A52}
+  .fridge-item{background:#fff;border-radius:18px;padding:12px;box-shadow:0 4px 14px rgba(84,58,38,.05);border-left:4px solid #E9E1D8}
+  .fridge-item.red{border-left-color:var(--bad)}
+  .fridge-item.amber{border-left-color:var(--warn)}
+  .fridge-item.good{border-left-color:var(--good)}
+  .fridge-item.none{border-left-color:#DCD3C8}
+  .fi-head{display:flex;align-items:flex-start;gap:9px}
+  .fi-emoji{width:34px;height:34px;border-radius:11px;background:#F6F1EB;display:grid;place-items:center;font-size:16px;flex:0 0 auto}
+  .fi-title{flex:1;min-width:0}
+  .fi-name{margin:0;font-size:14.5px;font-weight:800;letter-spacing:-.01em;line-height:1.3;word-break:keep-all;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .fi-sub{margin:2px 0 0;font-size:11.5px;font-weight:600;color:var(--muted)}
+  .badge{flex:0 0 auto;font-size:11.5px;font-weight:800;padding:5px 8px;border-radius:9px;white-space:nowrap;font-variant-numeric:tabular-nums}
+  .badge.red{background:var(--bad-soft);color:var(--bad)}
+  .badge.amber{background:var(--warn-soft);color:var(--warn)}
+  .badge.good{background:var(--good-soft);color:#227A52}
+  .badge.none{background:#F4F0EB;color:#9A8B7D}
+  .fi-memo{margin:7px 0 0;font-size:12.5px;color:#6E6258;line-height:1.4;word-break:keep-all}
+  .fi-actions{display:flex;gap:6px;margin-top:9px}
+  .btn-eaten{flex:1;min-height:44px;border-radius:12px;background:var(--good-soft);color:#1F7A50;font-size:13.5px;font-weight:800}
+  .btn-eaten:active{background:#D6EFE3}
+  .btn-del{width:44px;min-height:44px;border-radius:12px;background:#F7F3EE;color:#B5A899;font-size:15px;flex:0 0 auto}
+  .btn-del:active{background:var(--bad-soft);color:var(--bad)}
+
+  /* ---------- empty ---------- */
+  .empty{text-align:center;padding:26px 14px;color:#A99C90;font-size:13px;line-height:1.6}
+  .empty .big{display:block;font-size:30px;margin-bottom:6px}
+
+  /* ---------- tab bar ---------- */
+  .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(248,244,238,.93);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:8px 16px calc(8px + env(safe-area-inset-bottom))}
+  .tabbar-inner{max-width:520px;margin:0 auto;display:flex;gap:8px}
+  .tabbar button{flex:1;min-height:54px;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11.5px;font-weight:800;color:#9A8B7D}
+  .tabbar button .ico{position:relative;font-size:19px;line-height:1}
+  .tabbar button.active{color:var(--accent-ink);background:var(--accent-soft)}
+  .tabbar .badge-dot{position:absolute;top:-4px;right:-9px;min-width:17px;height:17px;padding:0 4px;border-radius:99px;background:var(--bad);color:#fff;font-size:10.5px;font-weight:800;display:grid;place-items:center;line-height:1}
+
+  /* ---------- toast ---------- */
+  .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translate(-50%,14px);z-index:60;display:flex;align-items:center;gap:12px;max-width:calc(100% - 28px);padding:12px 14px;border-radius:14px;background:#2B2622;color:#fff;font-size:13px;font-weight:700;box-shadow:0 14px 32px rgba(0,0,0,.26);opacity:0;pointer-events:none;transition:opacity .2s ease,transform .2s ease}
+  .toast.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+  .toast button{color:#FFB48F;font-size:13px;font-weight:800;padding:6px 2px;min-height:36px;flex:0 0 auto}
+
+  /* ---------- sheet ---------- */
+  .backdrop{position:fixed;inset:0;z-index:70;background:rgba(40,28,20,.4);opacity:0;transition:opacity .22s ease}
+  .backdrop.show{opacity:1}
+  .sheet{position:fixed;left:0;right:0;bottom:0;z-index:80;max-width:520px;margin:0 auto;background:#fff;border-radius:26px 26px 0 0;padding:8px 18px calc(20px + env(safe-area-inset-bottom));transform:translateY(104%);visibility:hidden;transition:transform .28s cubic-bezier(.22,.8,.3,1),visibility 0s linear .28s;box-shadow:0 -10px 40px rgba(60,40,25,.18)}
+  .sheet.open{transform:translateY(0);visibility:visible;transition:transform .28s cubic-bezier(.22,.8,.3,1),visibility 0s}
+  .grabber{width:40px;height:4px;border-radius:99px;background:#E8DED4;margin:6px auto 14px}
+  .sheet h2{margin:0 0 3px;font-size:17px;font-weight:800;letter-spacing:-.02em}
+  .sheet .hint{margin:0 0 14px;font-size:12px;font-weight:600;color:var(--muted)}
+  .sheet-row{display:flex;align-items:center;gap:10px;width:100%;min-height:52px;padding:0 14px;margin-bottom:8px;border-radius:14px;background:#FAF7F3;font-size:14px;font-weight:700;text-align:left}
+  .sheet-row:active{background:#F2EBE3}
+  .sheet-row .ico{font-size:17px;width:22px;text-align:center;flex:0 0 auto}
+  .sheet-row.danger{color:var(--bad);background:var(--bad-soft)}
+  .sheet-foot{margin:14px 0 0;font-size:11px;line-height:1.6;color:#A99C90;text-align:center}
+
+  /* ---------- modal ---------- */
+  .modal{position:fixed;inset:0;z-index:90;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(40,28,20,.45)}
+  .modal-card{width:100%;max-width:400px;max-height:84vh;overflow:auto;background:#fff;border-radius:22px;padding:20px;box-shadow:0 24px 60px rgba(0,0,0,.28)}
+  .modal-card h3{margin:0 0 8px;font-size:17px;font-weight:800;letter-spacing:-.02em}
+  .modal-card p{margin:0 0 16px;font-size:13.5px;line-height:1.55;color:#6E6258}
+  .modal-actions{display:flex;gap:8px;margin-top:4px}
+  .modal-actions button{flex:1;min-height:48px;border-radius:13px;font-size:14.5px;font-weight:800}
+  .btn-ghost{background:#F3EEE8;color:#5C5045}
+  .btn-accent{background:var(--accent);color:#fff}
+  .btn-danger{background:var(--bad);color:#fff}
+  .file-pick{display:flex;align-items:center;justify-content:center;min-height:48px;border-radius:13px;border:1.5px dashed #E3D4C4;background:#FDFBF9;font-size:13.5px;font-weight:800;color:#8A7B6E;margin-bottom:10px}
+  #importText{width:100%;min-height:96px;padding:11px 12px;border:1.5px solid var(--line);border-radius:13px;background:#FDFBF9;font-size:16px;line-height:1.5;resize:vertical;outline:none}
+  #importText:focus{border-color:var(--accent);background:#fff}
+
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none !important;animation:none !important}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="topbar">
+    <div>
+      <p class="eyebrow" id="todayLabel">오늘</p>
+      <h1>식비 &amp; 냉장고</h1>
+    </div>
+    <button type="button" class="icon-btn" id="menuBtn" aria-label="설정과 백업 열기">⋯</button>
+  </header>
+
+  <section class="summary" id="summaryCard" aria-label="이번 달 식비 요약">
+    <div class="sum-head">
+      <button type="button" class="month-nav" id="prevMonth" aria-label="이전 달">‹</button>
+      <span id="monthLabel">2026년 11월</span>
+      <button type="button" class="month-nav" id="nextMonth" aria-label="다음 달">›</button>
+    </div>
+    <p class="sum-label" id="sumLabel">이번 달 남은 식비</p>
+    <p class="sum-amount" id="remainingAmount">0<span>원</span></p>
+    <div class="bar"><div class="bar-fill" id="barFill"></div></div>
+    <div class="bar-meta">
+      <span id="spentLabel">쓴 돈 0원</span>
+      <span class="pct" id="pctLabel">0%</span>
+    </div>
+    <div class="budget-row">
+      <label for="budgetInput">목표 예산</label>
+      <div class="budget-edit">
+        <input type="text" id="budgetInput" inputmode="numeric" maxlength="9" aria-label="목표 예산 (원)">
+        <span>원</span>
+      </div>
+    </div>
+    <div class="sum-stats">
+      <div><span>하루 권장 예산</span><strong id="dailyBudget">-</strong></div>
+      <div><span>남은 일수</span><strong id="daysLeft">-</strong></div>
+    </div>
+  </section>
+
+  <div class="warn-note" id="storageNote" hidden>
+    <span>⚠️ 이 브라우저에서는 자동 저장이 막혀 있어요. 화면을 닫으면 기록이 사라질 수 있으니, 설정에서 JSON으로 백업해 두세요.</span>
+  </div>
+
+  <div class="sample-note" id="sampleNote" hidden>
+    <span>👀 지금은 <b>예시 데이터</b>예요. 지우고 내 기록을 채워 보세요.</span>
+    <button type="button" id="clearSampleInline">샘플 비우기</button>
+  </div>
+
+  <!-- ================= 식비 기록 ================= -->
+  <section id="view-expense">
+    <div class="section-head">
+      <h2>빠른 기록</h2>
+      <span class="sub">쓴 돈은 바로 반영돼요</span>
+    </div>
+    <form class="card form" id="expenseForm" autocomplete="off">
+      <div class="row2">
+        <label class="field">
+          <span>날짜</span>
+          <input type="date" id="expDate">
+        </label>
+        <label class="field">
+          <span>금액</span>
+          <div class="money-input">
+            <input type="number" id="expAmount" inputmode="numeric" min="0" placeholder="0">
+            <span class="unit">원</span>
+          </div>
+        </label>
+      </div>
+      <label class="field">
+        <span>내역</span>
+        <input type="text" id="expTitle" maxlength="40" placeholder="예: 이마트 장보기, 김치찌개">
+      </label>
+      <div class="field">
+        <span>카테고리</span>
+        <div class="chips" id="catChips" role="group" aria-label="카테고리 선택">
+          <button type="button" class="chip" data-cat="grocery" aria-pressed="false">🛒 장보기·식재료</button>
+          <button type="button" class="chip" data-cat="eating" aria-pressed="false">🍜 외식·배달</button>
+          <button type="button" class="chip" data-cat="cafe" aria-pressed="false">☕ 카페·간식</button>
+        </div>
+      </div>
+      <button type="submit" class="primary">기록하기</button>
+    </form>
+
+    <div class="section-head">
+      <h2>카테고리별 지출</h2>
+      <span class="sub" id="expMonthTotal"></span>
+    </div>
+    <div class="card cat-sum" id="catSummary"></div>
+
+    <div class="section-head">
+      <h2>지출 내역</h2>
+      <span class="sub" id="expCountLabel"></span>
+    </div>
+    <div class="chips chips-scroll" id="expFilters" role="group" aria-label="카테고리 필터"></div>
+    <ul class="list" id="expList"></ul>
+  </section>
+
+  <!-- ================= 냉장고 ================= -->
+  <section id="view-fridge" hidden>
+    <div class="section-head">
+      <h2>재료 넣기</h2>
+      <span class="sub">소비기한을 비우면 기한 없음</span>
+    </div>
+    <form class="card form" id="fridgeForm" autocomplete="off">
+      <label class="field">
+        <span>재료명</span>
+        <input type="text" id="frName" maxlength="30" placeholder="예: 그릭요거트, 대파">
+      </label>
+      <div class="field">
+        <span>보관</span>
+        <div class="chips" id="storeChips" role="group" aria-label="보관 방법 선택">
+          <button type="button" class="chip" data-store="fridge" aria-pressed="false">🧊 냉장</button>
+          <button type="button" class="chip" data-store="freezer" aria-pressed="false">❄️ 냉동</button>
+          <button type="button" class="chip" data-store="pantry" aria-pressed="false">🧺 실온</button>
+        </div>
+      </div>
+      <label class="field">
+        <span>소비기한 (선택)</span>
+        <input type="date" id="frExpiry">
+      </label>
+      <label class="field">
+        <span>메모 (선택)</span>
+        <input type="text" id="frMemo" maxlength="40" placeholder="예: 아침에 꿀 얹어 먹기">
+      </label>
+      <button type="submit" class="primary">냉장고에 넣기</button>
+    </form>
+
+    <div class="section-head">
+      <h2>냉장고 보드</h2>
+      <span class="sub">임박한 순서로 보여드려요</span>
+    </div>
+    <div class="pills" id="fridgeStats"></div>
+    <div class="chips chips-scroll" id="fridgeFilters" role="group" aria-label="보관 필터"></div>
+    <ul class="list" id="fridgeList"></ul>
+  </section>
+</div>
+
+<nav class="tabbar" aria-label="화면 전환">
+  <div class="tabbar-inner">
+    <button type="button" data-view="expense" class="active" aria-pressed="true">
+      <span class="ico">💸</span><span>식비 기록</span>
+    </button>
+    <button type="button" data-view="fridge" aria-pressed="false">
+      <span class="ico">🧊<span class="badge-dot" id="fridgeBadge" hidden>0</span></span><span>냉장고 보드</span>
+    </button>
+  </div>
+</nav>
+
+<div class="toast" id="toast" role="status" aria-live="polite">
+  <span id="toastMsg"></span>
+  <button type="button" id="toastAction" hidden>실행 취소</button>
+</div>
+
+<div class="backdrop" id="sheetBackdrop" hidden></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" aria-hidden="true">
+  <div class="grabber"></div>
+  <h2 id="sheetTitle">설정 &amp; 백업</h2>
+  <p class="hint">기록은 이 브라우저(이 기기)에만 저장돼요.</p>
+  <button type="button" class="sheet-row" id="btnExport"><span class="ico">📤</span><span>JSON 파일로 내보내기</span></button>
+  <button type="button" class="sheet-row" id="btnCopy"><span class="ico">📋</span><span>JSON 복사하기</span></button>
+  <button type="button" class="sheet-row" id="btnImport"><span class="ico">📥</span><span>백업 불러오기</span></button>
+  <button type="button" class="sheet-row" id="btnClearSample"><span class="ico">🧹</span><span>샘플 데이터 비우기</span></button>
+  <button type="button" class="sheet-row danger" id="btnReset"><span class="ico">🗑</span><span>전체 초기화</span></button>
+  <p class="sheet-foot">브라우저 기록을 지우거나 다른 기기에서 열면 기록이 보이지 않아요.<br>가끔 ‘JSON 파일로 내보내기’로 백업해 두세요.</p>
+</div>
+
+<div class="modal" id="confirmModal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+    <h3 id="confirmTitle">확인</h3>
+    <p id="confirmBody"></p>
+    <div class="modal-actions">
+      <button type="button" class="btn-ghost" id="confirmCancel">취소</button>
+      <button type="button" class="btn-danger" id="confirmOk">확인</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="importModal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="importTitle">
+    <h3 id="importTitle">백업 불러오기</h3>
+    <p>내보낸 JSON 파일을 고르거나 내용을 붙여넣어 주세요. 불러오면 지금 기록은 백업 내용으로 바뀝니다.</p>
+    <label class="file-pick">
+      <input type="file" id="importFile" accept=".json,application/json,text/plain" hidden>
+      <span>📂 파일 선택</span>
+    </label>
+    <textarea id="importText" placeholder='{"expenses":[…],"fridge":[…] }' aria-label="백업 JSON 붙여넣기"></textarea>
+    <div class="modal-actions">
+      <button type="button" class="btn-ghost" id="importCancel">취소</button>
+      <button type="button" class="btn-accent" id="importOk">불러오기</button>
+    </div>
+  </div>
+</div>
+
+<noscript><p style="padding:24px;text-align:center">이 화면을 쓰려면 브라우저의 JavaScript를 켜 주세요.</p></noscript>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ---------------- constants ---------------- */
+  var KEY = 'foodBudgetFridge.v1';
+  var DEFAULT_BUDGET = 350000;
+  var WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
+  var CATS = [
+    { id: 'grocery', label: '장보기·식재료', emoji: '🛒', color: '#F0663A', soft: '#FFEDE4' },
+    { id: 'eating',  label: '외식·배달',    emoji: '🍜', color: '#D98411', soft: '#FDF0DC' },
+    { id: 'cafe',    label: '카페·간식',    emoji: '☕', color: '#7C63C8', soft: '#F0EBFB' }
+  ];
+  var STORES = [
+    { id: 'fridge',  label: '냉장', emoji: '🧊' },
+    { id: 'freezer', label: '냉동', emoji: '❄️' },
+    { id: 'pantry',  label: '실온', emoji: '🧺' }
+  ];
+
+  /* ---------------- state ---------------- */
+  var state = null;
+  var memoryOnly = false;
+  var viewMonth = '';
+  var currentView = 'expense';
+  var expFilter = 'all';
+  var fridgeFilter = 'all';
+  var selCat = 'grocery';
+  var selStore = 'fridge';
+  var toastTimer = null;
+  var toastHandler = null;
+
+  /* ---------------- helpers ---------------- */
+  function $(id) { return document.getElementById(id); }
+  var nf = new Intl.NumberFormat('ko-KR');
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+  function keyOf(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+  function todayKey() { return keyOf(new Date()); }
+  function parseKey(s) {
+    var p = String(s).split('-');
+    return new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2]));
+  }
+  function diffDays(fromKey, toKey) {
+    var a = parseKey(fromKey), b = parseKey(toKey);
+    return Math.round((Date.UTC(b.getFullYear(), b.getMonth(), b.getDate()) -
+      Date.UTC(a.getFullYear(), a.getMonth(), a.getDate())) / 86400000);
+  }
+  function won(n) { return nf.format(Math.round(n)) + '원'; }
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function catOf(id) {
+    for (var i = 0; i < CATS.length; i++) { if (CATS[i].id === id) return CATS[i]; }
+    return CATS[0];
+  }
+  function storeOf(id) {
+    for (var i = 0; i < STORES.length; i++) { if (STORES[i].id === id) return STORES[i]; }
+    return STORES[0];
+  }
+  function fmtMD(key) {
+    var d = parseKey(key);
+    return (d.getMonth() + 1) + '/' + d.getDate();
+  }
+  function dayLabel(key) {
+    var d = parseKey(key);
+    return (d.getMonth() + 1) + '월 ' + d.getDate() + '일 ' + WEEKDAYS[d.getDay()] + '요일';
+  }
+  function newId(prefix) { return prefix + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+  function cleanId(v, prefix) {
+    return (typeof v === 'string' && /^[A-Za-z0-9_-]{1,40}$/.test(v)) ? v : newId(prefix);
+  }
+
+  /* ---------------- storage ---------------- */
+  function blankState() {
+    return { version: 1, seeded: false, budgets: {}, expenses: [], fridge: [], eaten: [] };
+  }
+  function cleanExpense(e) {
+    if (!e || typeof e !== 'object') return null;
+    var date = typeof e.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(e.date) ? e.date : todayKey();
+    var amount = Math.round(Number(e.amount));
+    if (!isFinite(amount) || amount < 0) return null;
+    var title = typeof e.title === 'string' ? e.title.slice(0, 60) : '';
+    if (!title) return null;
+    var cat = 'grocery';
+    for (var i = 0; i < CATS.length; i++) { if (CATS[i].id === e.category) cat = e.category; }
+    return {
+      id: cleanId(e.id, 'e'),
+      date: date, title: title, category: cat, amount: amount,
+      createdAt: isFinite(Number(e.createdAt)) ? Number(e.createdAt) : Date.now(),
+      sample: !!e.sample
+    };
+  }
+  function cleanFridge(f) {
+    if (!f || typeof f !== 'object') return null;
+    var name = typeof f.name === 'string' ? f.name.trim().slice(0, 40) : '';
+    if (!name) return null;
+    var expiry = typeof f.expiry === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(f.expiry) ? f.expiry : '';
+    var store = 'fridge';
+    for (var i = 0; i < STORES.length; i++) { if (STORES[i].id === f.storage) store = f.storage; }
+    return {
+      id: cleanId(f.id, 'f'),
+      name: name, storage: store, expiry: expiry,
+      memo: typeof f.memo === 'string' ? f.memo.slice(0, 60) : '',
+      createdAt: isFinite(Number(f.createdAt)) ? Number(f.createdAt) : Date.now(),
+      sample: !!f.sample
+    };
+  }
+  function normalize(p) {
+    var budgets = {};
+    if (p && p.budgets && typeof p.budgets === 'object') {
+      Object.keys(p.budgets).forEach(function (k) {
+        var v = Number(p.budgets[k]);
+        if (/^\d{4}-\d{2}$/.test(k) && isFinite(v) && v > 0) budgets[k] = Math.round(v);
+      });
+    }
+    var expenses = [], fridge = [], eaten = [];
+    if (p && Array.isArray(p.expenses)) {
+      p.expenses.forEach(function (e) { var c = cleanExpense(e); if (c) expenses.push(c); });
+    }
+    if (p && Array.isArray(p.fridge)) {
+      p.fridge.forEach(function (f) { var c = cleanFridge(f); if (c) fridge.push(c); });
+    }
+    if (p && Array.isArray(p.eaten)) {
+      p.eaten.forEach(function (x) {
+        if (x && typeof x.name === 'string') {
+          eaten.push({ id: String(x.id || newId('eat')), name: x.name, date: x.date || todayKey(), at: Number(x.at) || Date.now() });
+        }
+      });
+    }
+    return {
+      version: 1,
+      seeded: p && p.seeded === false ? false : true,
+      budgets: budgets, expenses: expenses, fridge: fridge, eaten: eaten
+    };
+  }
+  function load() {
+    var raw = null;
+    try { raw = window.localStorage.getItem(KEY); }
+    catch (e) { memoryOnly = true; }
+    if (raw) {
+      try {
+        var parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === 'object') { state = normalize(parsed); return; }
+      } catch (e2) { /* 손상된 저장값은 새로 시작 */ }
+    }
+    state = blankState();
+  }
+  function save() {
+    if (memoryOnly) { updateStorageNote(); return; }
+    try { window.localStorage.setItem(KEY, JSON.stringify(state)); }
+    catch (e) { memoryOnly = true; updateStorageNote(); }
+  }
+  function updateStorageNote() {
+    var n = $('storageNote');
+    if (n) n.hidden = !memoryOnly;
+  }
+
+  /* ---------------- seed ---------------- */
+  function seedSamples() {
+    var now = new Date();
+    var stamp = Date.now();
+    function dayAgo(n) {
+      var day = Math.max(1, now.getDate() - n);
+      return keyOf(new Date(now.getFullYear(), now.getMonth(), day));
+    }
+    function dayAhead(n) {
+      var d = new Date(now.getFullYear(), now.getMonth(), now.getDate() + n);
+      return keyOf(d);
+    }
+    var E = [
+      [0, '편의점 샌드위치·아메리카노', 6800, 'cafe'],
+      [1, '마켓컬리 장보기', 38900, 'grocery'],
+      [1, '동네 김치찌개', 9000, 'eating'],
+      [3, '배달 치킨', 23000, 'eating'],
+      [4, '스타벅스 카페라떼', 6500, 'cafe'],
+      [6, '이마트 장보기', 42300, 'grocery'],
+      [8, '동네 빵집 소금빵', 4500, 'cafe'],
+      [11, '계란·두부', 7900, 'grocery']
+    ];
+    state.expenses = E.map(function (row, i) {
+      return {
+        id: 'sample-e' + i, date: dayAgo(row[0]), title: row[1], category: row[3],
+        amount: row[2], createdAt: stamp - i * 1000, sample: true
+      };
+    });
+    var F = [
+      ['그릭요거트', 'fridge', 2, '아침에 꿀 얹어 먹기'],
+      ['유청 (요거트 만들고 남은 것)', 'fridge', 4, '베이킹 반죽·스무디에'],
+      ['방울토마토', 'fridge', -1, '샐러드용'],
+      ['두부', 'fridge', 1, '오늘 저녁 부침개'],
+      ['대파', 'fridge', 6, '손질해서 밀폐용기에'],
+      ['냉동 블루베리', 'freezer', 45, '오트밀에 한 줌'],
+      ['계란', 'fridge', 12, '10구'],
+      ['파스타면', 'pantry', null, '500g 중 1/3 남음']
+    ];
+    state.fridge = F.map(function (row, i) {
+      return {
+        id: 'sample-f' + i, name: row[0], storage: row[1],
+        expiry: row[2] === null ? '' : dayAhead(row[2]),
+        memo: row[3], createdAt: stamp - i * 1000, sample: true
+      };
+    });
+    // 실제로 다 먹은 기록도 하나
+    state.eaten = [
+      { id: 'sample-eat1', name: '우유', date: dayAgo(2), at: stamp - 9000 },
+      { id: 'sample-eat2', name: '시금치', date: dayAgo(5), at: stamp - 9500 }
+    ];
+    state.seeded = true;
+  }
+  function hasSamples() {
+    return state.expenses.some(function (e) { return e.sample; }) ||
+           state.fridge.some(function (f) { return f.sample; });
+  }
+
+  /* ---------------- month maths ---------------- */
+  function budgetOf(mk) {
+    var v = state.budgets[mk];
+    return (typeof v === 'number' && isFinite(v) && v > 0) ? v : DEFAULT_BUDGET;
+  }
+  function daysLeft(mk) {
+    var cur = todayKey().slice(0, 7);
+    var p = mk.split('-'), y = Number(p[0]), m = Number(p[1]);
+    var dim = new Date(y, m, 0).getDate();
+    if (mk === cur) return dim - new Date().getDate() + 1;
+    if (mk > cur) return dim;
+    return 0;
+  }
+  function monthExpenses(mk) {
+    return state.expenses.filter(function (e) { return e.date.slice(0, 7) === mk; });
+  }
+
+  /* ---------------- render : summary ---------------- */
+  function renderSummary() {
+    var mk = viewMonth;
+    var p = mk.split('-');
+    var list = monthExpenses(mk);
+    var spent = list.reduce(function (s, e) { return s + e.amount; }, 0);
+    var budget = budgetOf(mk);
+    var remaining = budget - spent;
+    var ratio = budget > 0 ? spent / budget : (spent > 0 ? 2 : 0);
+    var pct = Math.round(ratio * 100);
+    var status = (spent > budget) ? 'over' : (ratio >= 0.7 ? 'warn' : 'good');
+    if (budget <= 0) status = spent > 0 ? 'over' : 'good';
+    var isThisMonth = mk === todayKey().slice(0, 7);
+
+    $('monthLabel').textContent = p[0] + '년 ' + Number(p[1]) + '월';
+    $('nextMonth').disabled = mk >= todayKey().slice(0, 7);
+    $('prevMonth').disabled = false;
+
+    $('sumLabel').textContent = remaining < 0 ? '예산을 넘었어요' : (isThisMonth ? '이번 달 남은 식비' : '남은 식비');
+    var amountEl = $('remainingAmount');
+    amountEl.innerHTML = (remaining < 0 ? '−' : '') + nf.format(Math.abs(remaining)) + '<span>원</span>';
+    amountEl.className = 'sum-amount' + (remaining < 0 ? ' over' : '');
+
+    $('barFill').style.width = (spent > 0 ? Math.max(2, Math.min(100, pct)) : 0) + '%';
+    $('summaryCard').setAttribute('data-status', status);
+    $('spentLabel').textContent = '쓴 돈 ' + won(spent);
+    var pctEl = $('pctLabel');
+    pctEl.textContent = pct + '% 사용';
+    pctEl.className = 'pct' + (pct > 100 ? ' over' : '');
+
+    var budgetInput = $('budgetInput');
+    if (document.activeElement !== budgetInput) budgetInput.value = nf.format(budget);
+
+    var dl = daysLeft(mk);
+    $('daysLeft').textContent = dl > 0 ? dl + '일' : '—';
+    if (remaining > 0 && dl > 0) {
+      $('dailyBudget').textContent = won(Math.round(remaining / dl));
+    } else if (remaining <= 0 && isThisMonth) {
+      $('dailyBudget').textContent = '초과';
+    } else {
+      $('dailyBudget').textContent = '—';
+    }
+  }
+
+  /* ---------------- render : expenses ---------------- */
+  function renderExpenses() {
+    var list = monthExpenses(viewMonth);
+    var totals = {};
+    CATS.forEach(function (c) { totals[c.id] = 0; });
+    list.forEach(function (e) { if (totals[e.category] !== undefined) totals[e.category] += e.amount; });
+    var total = list.reduce(function (s, e) { return s + e.amount; }, 0);
+
+    $('expMonthTotal').textContent = total > 0 ? '이번 달 ' + won(total) : '';
+    $('expCountLabel').textContent = list.length ? list.length + '건' : '';
+
+    var maxCat = 1;
+    CATS.forEach(function (c) { if (totals[c.id] > maxCat) maxCat = totals[c.id]; });
+    $('catSummary').innerHTML = CATS.map(function (c) {
+      var v = totals[c.id];
+      var w = Math.round((v / maxCat) * 100);
+      return '<div class="cat-row">' +
+        '<span class="name"><span class="c-emoji" style="background:' + c.soft + '">' + c.emoji + '</span>' + c.label + '</span>' +
+        '<span class="track"><span class="fill" style="width:' + w + '%;background:' + c.color + '"></span></span>' +
+        '<span class="amt">' + nf.format(v) + '원</span>' +
+        '</div>';
+    }).join('');
+
+    var filters = [{ id: 'all', label: '전체' }].concat(CATS.map(function (c) {
+      return { id: c.id, label: c.emoji + ' ' + c.label };
+    }));
+    $('expFilters').innerHTML = filters.map(function (f) {
+      var count = f.id === 'all' ? list.length : list.filter(function (e) { return e.category === f.id; }).length;
+      return '<button type="button" class="chip' + (expFilter === f.id ? ' active' : '') + '" data-filter="' + f.id +
+        '" aria-pressed="' + (expFilter === f.id) + '">' + f.label + ' ' + count + '</button>';
+    }).join('');
+
+    var rows = list.filter(function (e) { return expFilter === 'all' || e.category === expFilter; });
+    rows.sort(function (a, b) {
+      if (a.date === b.date) return b.createdAt - a.createdAt;
+      return a.date < b.date ? 1 : -1;
+    });
+
+    var ul = $('expList');
+    if (!rows.length) {
+      ul.innerHTML = '<li class="empty"><span class="big">🧾</span>' +
+        (list.length ? '이 카테고리에는 기록이 없어요.' : '아직 기록이 없어요.<br>위에서 오늘 쓴 돈을 한 줄 적어 보세요.') +
+        '</li>';
+      return;
+    }
+    var html = '', lastDate = '';
+    var dayTotals = {};
+    rows.forEach(function (e) { dayTotals[e.date] = (dayTotals[e.date] || 0) + e.amount; });
+    rows.forEach(function (e) {
+      if (e.date !== lastDate) {
+        lastDate = e.date;
+        html += '<li class="day-head"><span>' + dayLabel(e.date) + '</span><span class="day-sum">' +
+          nf.format(dayTotals[e.date]) + '원</span></li>';
+      }
+      var c = catOf(e.category);
+      html += '<li class="exp">' +
+        '<span class="emoji" style="background:' + c.soft + '">' + c.emoji + '</span>' +
+        '<span class="body"><p class="title">' + esc(e.title) + '</p><p class="meta">' + c.label + '</p></span>' +
+        '<span class="right"><span class="amt">' + nf.format(e.amount) + '원</span>' +
+        '<button type="button" class="icon-del" data-del-exp="' + e.id + '" aria-label="' + esc(e.title) + ' 기록 삭제">✕</button></span>' +
+        '</li>';
+    });
+    ul.innerHTML = html;
+  }
+
+  /* ---------------- render : fridge ---------------- */
+  function urgencyOf(expiry) {
+    if (!expiry) return { level: 'none', text: '기한 없음', diff: null };
+    var d = diffDays(todayKey(), expiry);
+    if (d < 0) return { level: 'red', text: Math.abs(d) + '일 지남', diff: d };
+    if (d === 0) return { level: 'red', text: '오늘까지', diff: d };
+    if (d <= 3) return { level: 'red', text: 'D-' + d, diff: d };
+    if (d <= 7) return { level: 'amber', text: 'D-' + d, diff: d };
+    return { level: 'good', text: 'D-' + d, diff: d };
+  }
+  function eatenCount() { return state.eaten.length; }
+
+  function renderFridge() {
+    var all = state.fridge.slice();
+    var counts = { fridge: 0, freezer: 0, pantry: 0 };
+    var urgent = 0;
+    all.forEach(function (f) {
+      counts[f.storage] = (counts[f.storage] || 0) + 1;
+      if (urgencyOf(f.expiry).level === 'red') urgent++;
+    });
+
+    $('fridgeStats').innerHTML =
+      '<span class="pill">' + STORES.map(function (s) {
+        return s.emoji + ' ' + s.label + ' ' + (counts[s.id] || 0);
+      }).join(' · ') + '</span>' +
+      '<span class="pill' + (urgent ? ' urgent' : '') + '">⏰ 임박 ' + urgent + '</span>' +
+      '<span class="pill good">✅ 다 먹음 ' + eatenCount() + '</span>';
+
+    var filters = [{ id: 'all', label: '전체' }].concat(STORES.map(function (s) {
+      return { id: s.id, label: s.emoji + ' ' + s.label };
+    }));
+    $('fridgeFilters').innerHTML = filters.map(function (f) {
+      var n = f.id === 'all' ? all.length : all.filter(function (x) { return x.storage === f.id; }).length;
+      return '<button type="button" class="chip' + (fridgeFilter === f.id ? ' active' : '') + '" data-store-filter="' + f.id +
+        '" aria-pressed="' + (fridgeFilter === f.id) + '">' + f.label + ' ' + n + '</button>';
+    }).join('');
+
+    var rows = all.filter(function (f) { return fridgeFilter === 'all' || f.storage === fridgeFilter; });
+    rows.sort(function (a, b) {
+      var ua = urgencyOf(a.expiry), ub = urgencyOf(b.expiry);
+      if (ua.diff === null && ub.diff === null) return b.createdAt - a.createdAt;
+      if (ua.diff === null) return 1;
+      if (ub.diff === null) return -1;
+      if (ua.diff !== ub.diff) return ua.diff - ub.diff;
+      return b.createdAt - a.createdAt;
+    });
+
+    var ul = $('fridgeList');
+    if (!rows.length) {
+      ul.innerHTML = '<li class="empty"><span class="big">🧊</span>' +
+        (all.length ? '이 보관 칸에는 재료가 없어요.' : '냉장고가 비어 있어요.<br>위에서 재료를 넣으면 소비기한을 세어 드려요.') +
+        '</li>';
+      return;
+    }
+    ul.innerHTML = rows.map(function (f) {
+      var u = urgencyOf(f.expiry);
+      var s = storeOf(f.storage);
+      var sub = s.label + ' · ' + (f.expiry ? fmtMD(f.expiry) + '까지' : '기한 없음');
+      return '<li class="fridge-item ' + u.level + '">' +
+        '<div class="fi-head">' +
+          '<span class="fi-emoji">' + s.emoji + '</span>' +
+          '<div class="fi-title"><p class="fi-name">' + esc(f.name) + '</p><p class="fi-sub">' + sub + '</p></div>' +
+          '<span class="badge ' + u.level + '">' + u.text + '</span>' +
+        '</div>' +
+        (f.memo ? '<p class="fi-memo">' + esc(f.memo) + '</p>' : '') +
+        '<div class="fi-actions">' +
+          '<button type="button" class="btn-eaten" data-eat="' + f.id + '">✓ 다 먹음</button>' +
+          '<button type="button" class="btn-del" data-del-fridge="' + f.id + '" aria-label="' + esc(f.name) + ' 삭제">🗑</button>' +
+        '</div>' +
+        '</li>';
+    }).join('');
+
+    var badge = $('fridgeBadge');
+    badge.hidden = urgent === 0;
+    badge.textContent = urgent > 99 ? '99+' : String(urgent);
+  }
+
+  function renderSampleNote() {
+    $('sampleNote').hidden = !hasSamples();
+  }
+  function renderAll() {
+    renderSummary();
+    renderExpenses();
+    renderFridge();
+    renderSampleNote();
+  }
+
+  /* ---------------- toast ---------------- */
+  function toast(msg, actionLabel, handler) {
+    var el = $('toast');
+    $('toastMsg').textContent = msg;
+    var btn = $('toastAction');
+    if (actionLabel && handler) {
+      btn.hidden = false;
+      btn.textContent = actionLabel;
+      toastHandler = handler;
+    } else {
+      btn.hidden = true;
+      toastHandler = null;
+    }
+    el.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () {
+      el.classList.remove('show');
+      toastHandler = null;
+    }, 5200);
+  }
+
+  /* ---------------- actions ---------------- */
+  function addExpense(date, title, category, amount) {
+    var item = {
+      id: newId('e'), date: date, title: title, category: category,
+      amount: amount, createdAt: Date.now(), sample: false
+    };
+    state.expenses.push(item);
+    if (date.slice(0, 7) !== viewMonth) {
+      viewMonth = date.slice(0, 7);
+    }
+    save();
+    renderAll();
+  }
+  function deleteExpense(id) {
+    var idx = -1;
+    for (var i = 0; i < state.expenses.length; i++) { if (state.expenses[i].id === id) { idx = i; break; } }
+    if (idx < 0) return;
+    var item = state.expenses.splice(idx, 1)[0];
+    save();
+    renderAll();
+    toast(won(item.amount) + ' 기록을 지웠어요', '실행 취소', function () {
+      state.expenses.splice(Math.min(idx, state.expenses.length), 0, item);
+      save();
+      renderAll();
+    });
+  }
+  function eatFridge(id) {
+    var idx = -1;
+    for (var i = 0; i < state.fridge.length; i++) { if (state.fridge[i].id === id) { idx = i; break; } }
+    if (idx < 0) return;
+    var item = state.fridge.splice(idx, 1)[0];
+    var rec = { id: newId('eat'), name: item.name, date: todayKey(), at: Date.now() };
+    state.eaten.unshift(rec);
+    save();
+    renderAll();
+    toast('‘' + item.name + '’ 다 먹음! 냉장고가 가벼워졌어요', '실행 취소', function () {
+      state.fridge.splice(Math.min(idx, state.fridge.length), 0, item);
+      state.eaten = state.eaten.filter(function (x) { return x.id !== rec.id; });
+      save();
+      renderAll();
+    });
+  }
+  function deleteFridge(id) {
+    var idx = -1;
+    for (var i = 0; i < state.fridge.length; i++) { if (state.fridge[i].id === id) { idx = i; break; } }
+    if (idx < 0) return;
+    var item = state.fridge.splice(idx, 1)[0];
+    save();
+    renderAll();
+    toast('‘' + item.name + '’을(를) 지웠어요', '실행 취소', function () {
+      state.fridge.splice(Math.min(idx, state.fridge.length), 0, item);
+      save();
+      renderAll();
+    });
+  }
+  function clearSamples(withUndo) {
+    if (!hasSamples()) { toast('지울 예시 데이터가 없어요'); return; }
+    var prevExpenses = state.expenses.slice();
+    var prevFridge = state.fridge.slice();
+    var prevEaten = state.eaten.slice();
+    state.expenses = state.expenses.filter(function (e) { return !e.sample; });
+    state.fridge = state.fridge.filter(function (f) { return !f.sample; });
+    state.eaten = [];
+    save();
+    renderAll();
+    toast('예시 데이터를 비웠어요. 이제 내 기록을 채워 보세요', withUndo === false ? null : '되돌리기', function () {
+      state.expenses = prevExpenses;
+      state.fridge = prevFridge;
+      state.eaten = prevEaten;
+      save();
+      renderAll();
+    });
+  }
+  function resetAll() {
+    state = blankState();
+    state.seeded = true;
+    save();
+    viewMonth = todayKey().slice(0, 7);
+    expFilter = 'all';
+    fridgeFilter = 'all';
+    $('budgetInput').value = DEFAULT_BUDGET;
+    renderAll();
+    toast('모든 기록을 지웠어요');
+  }
+
+  /* ---------------- export / import ---------------- */
+  function exportJson() {
+    var text = JSON.stringify(state, null, 2);
+    var name = '식비-냉장고-백업-' + todayKey().replace(/-/g, '') + '.json';
+    try {
+      var blob = new Blob([text], { type: 'application/json;charset=utf-8' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = name;
+      a.rel = 'noopener';
+      document.body.appendChild(a);
+      a.click();
+      a.parentNode.removeChild(a);
+      setTimeout(function () { URL.revokeObjectURL(url); }, 5000);
+      toast('백업 파일을 만들었어요');
+    } catch (e) {
+      copyJson();
+    }
+  }
+  function copyJson() {
+    var text = JSON.stringify(state);
+    function fallback() {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', 'readonly');
+      ta.style.position = 'fixed';
+      ta.style.top = '-1000px';
+      document.body.appendChild(ta);
+      ta.select();
+      var ok = false;
+      try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+      document.body.removeChild(ta);
+      toast(ok ? '백업 JSON을 복사했어요' : '복사가 안 돼요. 파일로 내보내기를 써 주세요');
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () {
+        toast('백업 JSON을 복사했어요');
+      }).catch(fallback);
+    } else {
+      fallback();
+    }
+  }
+  function applyImport(text) {
+    var parsed;
+    try { parsed = JSON.parse(text); }
+    catch (e) { toast('JSON을 읽을 수 없어요. 백업 파일 내용인지 확인해 주세요'); return; }
+    if (!parsed || typeof parsed !== 'object' || (!Array.isArray(parsed.expenses) && !Array.isArray(parsed.fridge))) {
+      toast('백업 파일 형식이 아니에요');
+      return;
+    }
+    var next = normalize(parsed);
+    next.seeded = true;
+    state = next;
+    save();
+    closeImport();
+    expFilter = 'all';
+    fridgeFilter = 'all';
+    renderAll();
+    toast('백업 데이터를 불러왔어요');
+  }
+
+  /* ---------------- overlay helpers ---------------- */
+  function openSheet() {
+    $('sheetBackdrop').hidden = false;
+    requestAnimationFrame(function () {
+      $('sheetBackdrop').classList.add('show');
+      $('sheet').classList.add('open');
+    });
+    $('sheet').setAttribute('aria-hidden', 'false');
+    document.body.classList.add('no-scroll');
+  }
+  function closeSheet() {
+    $('sheetBackdrop').classList.remove('show');
+    $('sheet').classList.remove('open');
+    $('sheet').setAttribute('aria-hidden', 'true');
+    setTimeout(function () { $('sheetBackdrop').hidden = true; }, 220);
+    document.body.classList.remove('no-scroll');
+  }
+  function openConfirm(title, body, okLabel, onOk) {
+    $('confirmTitle').textContent = title;
+    $('confirmBody').textContent = body;
+    $('confirmOk').textContent = okLabel;
+    $('confirmOk').onclick = function () {
+      $('confirmModal').hidden = true;
+      document.body.classList.remove('no-scroll');
+      if (onOk) onOk();
+    };
+    $('confirmModal').hidden = false;
+    document.body.classList.add('no-scroll');
+  }
+  function closeConfirm() { $('confirmModal').hidden = true; document.body.classList.remove('no-scroll'); }
+  function openImport() {
+    $('importText').value = '';
+    $('importModal').hidden = false;
+    document.body.classList.add('no-scroll');
+  }
+  function closeImport() { $('importModal').hidden = true; document.body.classList.remove('no-scroll'); }
+
+  /* ---------------- views ---------------- */
+  function setView(v) {
+    currentView = v;
+    $('view-expense').hidden = v !== 'expense';
+    $('view-fridge').hidden = v !== 'fridge';
+    var tabs = document.querySelectorAll('.tabbar button');
+    for (var i = 0; i < tabs.length; i++) {
+      var on = tabs[i].getAttribute('data-view') === v;
+      tabs[i].classList.toggle('active', on);
+      tabs[i].setAttribute('aria-pressed', on ? 'true' : 'false');
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  function shiftMonth(delta) {
+    var p = viewMonth.split('-');
+    var d = new Date(Number(p[0]), Number(p[1]) - 1 + delta, 1);
+    var key = d.getFullYear() + '-' + pad(d.getMonth() + 1);
+    if (key > todayKey().slice(0, 7)) return;
+    viewMonth = key;
+    renderSummary();
+    renderExpenses();
+  }
+  function syncChips() {
+    var i;
+    var cats = document.querySelectorAll('#catChips .chip');
+    for (i = 0; i < cats.length; i++) {
+      var on = cats[i].getAttribute('data-cat') === selCat;
+      cats[i].classList.toggle('active', on);
+      cats[i].setAttribute('aria-pressed', on ? 'true' : 'false');
+    }
+    var stores = document.querySelectorAll('#storeChips .chip');
+    for (i = 0; i < stores.length; i++) {
+      var on2 = stores[i].getAttribute('data-store') === selStore;
+      stores[i].classList.toggle('active', on2);
+      stores[i].setAttribute('aria-pressed', on2 ? 'true' : 'false');
+    }
+  }
+
+  /* ---------------- init ---------------- */
+  function updateTodayLabel() {
+    var d = new Date();
+    $('todayLabel').textContent = (d.getMonth() + 1) + '월 ' + d.getDate() + '일 ' + WEEKDAYS[d.getDay()] + '요일';
+  }
+
+  function init() {
+    load();
+    if (!state.seeded) { seedSamples(); save(); }
+    viewMonth = todayKey().slice(0, 7);
+    $('expDate').value = todayKey();
+    updateTodayLabel();
+    syncChips();
+
+    // tabs
+    var tabs = document.querySelectorAll('.tabbar button');
+    for (var i = 0; i < tabs.length; i++) {
+      tabs[i].addEventListener('click', function () { setView(this.getAttribute('data-view')); });
+    }
+    // month
+    $('prevMonth').addEventListener('click', function () { shiftMonth(-1); });
+    $('nextMonth').addEventListener('click', function () { shiftMonth(1); });
+    // budget
+    $('budgetInput').addEventListener('focus', function () {
+      this.value = String(budgetOf(viewMonth));
+      if (this.select) this.select();
+    });
+    $('budgetInput').addEventListener('input', function () {
+      var digits = String(this.value).replace(/[^0-9]/g, '');
+      var v = Math.min(999999999, Math.round(Number(digits) || 0));
+      if (v > 0) state.budgets[viewMonth] = v; else delete state.budgets[viewMonth];
+      save();
+      renderSummary();
+    });
+    $('budgetInput').addEventListener('blur', function () {
+      var v = Math.min(999999999, Math.round(Number(String(this.value).replace(/[^0-9]/g, '')) || 0));
+      if (!v || v <= 0) delete state.budgets[viewMonth];
+      else state.budgets[viewMonth] = v;
+      save();
+      renderSummary();
+      this.value = nf.format(budgetOf(viewMonth));
+    });
+    // category chips
+    var catBtns = document.querySelectorAll('#catChips .chip');
+    for (var c = 0; c < catBtns.length; c++) {
+      catBtns[c].addEventListener('click', function () {
+        selCat = this.getAttribute('data-cat');
+        syncChips();
+      });
+    }
+    // store chips
+    var stBtns = document.querySelectorAll('#storeChips .chip');
+    for (var s = 0; s < stBtns.length; s++) {
+      stBtns[s].addEventListener('click', function () {
+        selStore = this.getAttribute('data-store');
+        syncChips();
+      });
+    }
+    // expense submit
+    $('expenseForm').addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      var date = $('expDate').value || todayKey();
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) date = todayKey();
+      var title = $('expTitle').value.trim();
+      var amount = Math.round(Number($('expAmount').value));
+      if (!title) { toast('내역을 적어 주세요'); $('expTitle').focus(); return; }
+      if (!isFinite(amount) || amount <= 0) { toast('금액을 입력해 주세요'); $('expAmount').focus(); return; }
+      addExpense(date, title, selCat, amount);
+      $('expTitle').value = '';
+      $('expAmount').value = '';
+      toast(won(amount) + ' 기록했어요');
+    });
+    // fridge submit
+    $('fridgeForm').addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      var name = $('frName').value.trim();
+      if (!name) { toast('재료 이름을 적어 주세요'); $('frName').focus(); return; }
+      var expiry = $('frExpiry').value || '';
+      if (expiry && !/^\d{4}-\d{2}-\d{2}$/.test(expiry)) expiry = '';
+      state.fridge.push({
+        id: newId('f'), name: name, storage: selStore, expiry: expiry,
+        memo: $('frMemo').value.trim(), createdAt: Date.now(), sample: false
+      });
+      save();
+      renderAll();
+      $('frName').value = '';
+      $('frExpiry').value = '';
+      $('frMemo').value = '';
+      var msg = '‘' + name + '’ 넣었어요';
+      if (expiry) {
+        var u = urgencyOf(expiry);
+        msg += ' · ' + (u.diff === null ? '' : u.text);
+      }
+      toast(msg);
+    });
+    // list delegation
+    $('expList').addEventListener('click', function (ev) {
+      var btn = ev.target.closest ? ev.target.closest('[data-del-exp]') : null;
+      if (btn) deleteExpense(btn.getAttribute('data-del-exp'));
+    });
+    $('fridgeList').addEventListener('click', function (ev) {
+      var target = ev.target.closest ? ev.target.closest('[data-eat],[data-del-fridge]') : null;
+      if (!target) return;
+      if (target.hasAttribute('data-eat')) eatFridge(target.getAttribute('data-eat'));
+      else deleteFridge(target.getAttribute('data-del-fridge'));
+    });
+    $('expFilters').addEventListener('click', function (ev) {
+      var btn = ev.target.closest ? ev.target.closest('[data-filter]') : null;
+      if (!btn) return;
+      expFilter = btn.getAttribute('data-filter');
+      renderExpenses();
+    });
+    $('fridgeFilters').addEventListener('click', function (ev) {
+      var btn = ev.target.closest ? ev.target.closest('[data-store-filter]') : null;
+      if (!btn) return;
+      fridgeFilter = btn.getAttribute('data-store-filter');
+      renderFridge();
+    });
+    // toast action
+    $('toastAction').addEventListener('click', function () {
+      var fn = toastHandler;
+      toastHandler = null;
+      $('toast').classList.remove('show');
+      clearTimeout(toastTimer);
+      if (fn) fn();
+    });
+    // menu sheet
+    $('menuBtn').addEventListener('click', openSheet);
+    $('sheetBackdrop').addEventListener('click', closeSheet);
+    $('btnExport').addEventListener('click', function () { closeSheet(); exportJson(); });
+    $('btnCopy').addEventListener('click', function () { closeSheet(); copyJson(); });
+    $('btnImport').addEventListener('click', function () { closeSheet(); openImport(); });
+    $('btnClearSample').addEventListener('click', function () { closeSheet(); clearSamples(true); });
+    $('btnReset').addEventListener('click', function () {
+      closeSheet();
+      openConfirm('전체 초기화', '이 기기의 식비 기록과 냉장고 재료, 예산 설정이 모두 사라져요. 되돌릴 수 없어요.', '모두 지우기', resetAll);
+    });
+    $('clearSampleInline').addEventListener('click', function () { clearSamples(true); });
+    // confirm modal
+    $('confirmCancel').addEventListener('click', closeConfirm);
+    // import modal
+    $('importCancel').addEventListener('click', closeImport);
+    $('importOk').addEventListener('click', function () { applyImport($('importText').value); });
+    $('importFile').addEventListener('change', function () {
+      var file = this.files && this.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function () {
+        $('importText').value = String(reader.result || '');
+        toast('파일을 읽었어요. ‘불러오기’를 눌러 주세요');
+      };
+      reader.onerror = function () { toast('파일을 읽지 못했어요'); };
+      reader.readAsText(file);
+      this.value = '';
+    });
+    // keyboard
+    document.addEventListener('keydown', function (ev) {
+      if (ev.key !== 'Escape') return;
+      if (!$('confirmModal').hidden) { closeConfirm(); return; }
+      if (!$('importModal').hidden) { closeImport(); return; }
+      if ($('sheet').classList.contains('open')) closeSheet();
+    });
+
+    renderAll();
+    updateStorageNote();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+</body>
+</html>
