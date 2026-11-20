@@ -189,6 +189,10 @@
   .exp .amt{font-size:14.5px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
   .icon-del{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:14px;color:#C9BCB0}
   .icon-del:active{background:#FDF0EC;color:var(--bad)}
+  .icon-edit{width:38px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:14px;color:#C9BCB0}
+  .icon-edit:active{background:#F3EEE8;color:var(--accent-ink)}
+  .exp .body,.exp .amt{cursor:pointer}
+  .exp .body:active .title{color:var(--accent-ink)}
 
   /* ---------- fridge ---------- */
   .pills{display:flex;gap:6px;overflow-x:auto;padding:2px 2px 4px;margin:0 -2px 6px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
@@ -557,6 +561,45 @@
   </div>
 </div>
 
+<div class="modal" id="expEditModal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="expEditTitle">
+    <h3 id="expEditTitle">지출 수정</h3>
+    <p>날짜·금액·내역·카테고리를 고칠 수 있어요.</p>
+    <div class="form" style="gap:11px">
+      <div class="row2">
+        <label class="field">
+          <span>날짜</span>
+          <input type="date" id="exxDate">
+        </label>
+        <label class="field">
+          <span>금액</span>
+          <div class="money-input">
+            <input type="number" id="exxAmount" inputmode="numeric" min="0" placeholder="0">
+            <span class="unit">원</span>
+          </div>
+        </label>
+      </div>
+      <label class="field">
+        <span>내역</span>
+        <input type="text" id="exxTitle" maxlength="40" placeholder="예: 이마트 장보기">
+      </label>
+      <div class="field">
+        <span>카테고리</span>
+        <div class="chips" id="edxCatChips" role="group" aria-label="카테고리 선택">
+          <button type="button" class="chip" data-cat="grocery" aria-pressed="false">🛒 장보기·식재료</button>
+          <button type="button" class="chip" data-cat="eating" aria-pressed="false">🍜 외식·배달</button>
+          <button type="button" class="chip" data-cat="cafe" aria-pressed="false">☕ 카페·간식</button>
+        </div>
+      </div>
+      <p class="link-hint" id="exxLinkNote" hidden></p>
+    </div>
+    <div class="modal-actions" style="margin-top:14px">
+      <button type="button" class="btn-ghost" id="expEditCancel">취소</button>
+      <button type="button" class="btn-accent" id="expEditSave">저장</button>
+    </div>
+  </div>
+</div>
+
 <noscript><p style="padding:24px;text-align:center">이 화면을 쓰려면 브라우저의 JavaScript를 켜 주세요.</p></noscript>
 
 <script>
@@ -600,6 +643,10 @@
   var edUnit = 'day';
   var lpTimer = null;
   var lpFired = false;
+  var expEditId = null;
+  var edxCat = 'grocery';
+  var lpExpTimer = null;
+  var lpExpFired = false;
 
   /* ---------------- helpers ---------------- */
   function $(id) { return document.getElementById(id); }
@@ -961,6 +1008,7 @@
         '<span class="emoji" style="background:' + c.soft + '">' + c.emoji + '</span>' +
         '<span class="body"><p class="title">' + esc(e.title) + '</p><p class="meta">' + c.label + '</p>' + tags + '</span>' +
         '<span class="right"><span class="amt">' + nf.format(e.amount) + '원</span>' +
+        '<button type="button" class="icon-edit" data-edit-exp="' + e.id + '" aria-label="' + esc(e.title) + ' 기록 수정">✏️</button>' +
         '<button type="button" class="icon-del" data-del-exp="' + e.id + '" aria-label="' + esc(e.title) + ' 기록 삭제">✕</button></span>' +
         '</li>';
     });
@@ -1666,6 +1714,88 @@
     toast('‘' + f.name + '’ 수정했어요 · ' + portionText(p));
   }
 
+  /* ---------------- expense edit ---------------- */
+  function syncExpEditUI() {
+    var btns = $('edxCatChips').querySelectorAll('.chip');
+    for (var i = 0; i < btns.length; i++) {
+      var on = btns[i].getAttribute('data-cat') === edxCat;
+      btns[i].classList.toggle('active', on);
+      btns[i].setAttribute('aria-pressed', on ? 'true' : 'false');
+    }
+    var links = expEditId ? linkedFridgeOf(expEditId).length : 0;
+    var note = $('exxLinkNote');
+    if (links > 0) {
+      note.hidden = false;
+      note.textContent = edxCat === 'grocery'
+        ? '🧊 냉장고 재료 ' + links + '개와 연결돼 있어요. 내역·날짜를 고치면 냉장고에도 그대로 보여요.'
+        : '카테고리를 바꾸면 냉장고 재료 ' + links + '개의 연결만 풀려요. 재료는 냉장고에 그대로 남아요.';
+    } else {
+      note.hidden = true;
+      note.textContent = '';
+    }
+  }
+  function openExpEdit(id) {
+    var e = expById(id);
+    if (!e) return;
+    expEditId = id;
+    edxCat = e.category;
+    $('exxDate').value = e.date;
+    $('exxAmount').value = String(e.amount);
+    $('exxTitle').value = e.title;
+    syncExpEditUI();
+    $('expEditModal').hidden = false;
+    document.body.classList.add('no-scroll');
+  }
+  function closeExpEdit() {
+    $('expEditModal').hidden = true;
+    expEditId = null;
+    document.body.classList.remove('no-scroll');
+  }
+  function saveExpEdit() {
+    var e = expEditId ? expById(expEditId) : null;
+    if (!e) { closeExpEdit(); return; }
+    var title = $('exxTitle').value.trim();
+    if (!title) { toast('내역을 적어 주세요'); $('exxTitle').focus(); return; }
+    if ($('exxAmount').validity && $('exxAmount').validity.badInput) { toast('금액을 숫자로 적어 주세요'); $('exxAmount').focus(); return; }
+    var amount = Math.round(Number($('exxAmount').value));
+    if (!isFinite(amount) || amount <= 0) { toast('금액은 0원보다 커야 해요'); $('exxAmount').focus(); return; }
+    amount = Math.min(999999999, amount);
+    var date = $('exxDate').value || e.date;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) date = e.date;
+    var cat = 'grocery';
+    for (var i = 0; i < CATS.length; i++) { if (CATS[i].id === edxCat) cat = edxCat; }
+    var prev = { title: e.title, amount: e.amount, date: e.date, category: e.category };
+    var unlinked = [];
+    if (prev.category === 'grocery' && cat !== 'grocery') {
+      linkedFridgeOf(e.id).forEach(function (f) { f.linkedExpenseId = ''; unlinked.push(f.id); });
+    }
+    e.title = title.slice(0, 40);
+    e.amount = amount;
+    e.date = date;
+    e.category = cat;
+    if (date.slice(0, 7) !== viewMonth) viewMonth = date.slice(0, 7);
+    save();
+    renderAll();
+    closeExpEdit();
+    var msg = '‘' + e.title + '’ 기록을 ' + won(e.amount) + '로 수정했어요';
+    if (unlinked.length) msg += ' · 냉장고 ' + unlinked.length + '개는 연결만 풀었어요';
+    toast(msg, '실행 취소', function () {
+      var cur = expById(e.id);
+      if (!cur) return;
+      cur.title = prev.title;
+      cur.amount = prev.amount;
+      cur.date = prev.date;
+      cur.category = prev.category;
+      unlinked.forEach(function (fid) {
+        for (var k = 0; k < state.fridge.length; k++) {
+          if (state.fridge[k].id === fid && !state.fridge[k].linkedExpenseId) state.fridge[k].linkedExpenseId = e.id;
+        }
+      });
+      save();
+      renderAll();
+    });
+  }
+
   /* ---------------- views ---------------- */
   function setView(v) {
     currentView = v;
@@ -1842,10 +1972,33 @@
     });
     // list delegation
     $('expList').addEventListener('click', function (ev) {
-      var btn = ev.target.closest ? ev.target.closest('[data-del-exp],[data-goto-fridge]') : null;
-      if (!btn) return;
-      if (btn.hasAttribute('data-goto-fridge')) { setView('fridge'); return; }
-      requestDeleteExpense(btn.getAttribute('data-del-exp'));
+      if (lpExpFired) { lpExpFired = false; return; }
+      var btn = ev.target.closest ? ev.target.closest('[data-del-exp],[data-goto-fridge],[data-edit-exp]') : null;
+      if (btn) {
+        if (btn.hasAttribute('data-goto-fridge')) { setView('fridge'); return; }
+        if (btn.hasAttribute('data-edit-exp')) { openExpEdit(btn.getAttribute('data-edit-exp')); return; }
+        requestDeleteExpense(btn.getAttribute('data-del-exp'));
+        return;
+      }
+      var row = ev.target.closest ? ev.target.closest('[data-exp-row]') : null;
+      if (row) openExpEdit(row.getAttribute('data-exp-row'));
+    });
+    // 길게 눌러도 수정 (iOS 텍스트 선택 방지)
+    $('expList').addEventListener('touchstart', function (ev) {
+      var card = ev.target.closest ? ev.target.closest('.exp') : null;
+      if (!card) return;
+      if (ev.target.closest && ev.target.closest('button')) return;
+      var id = card.getAttribute('data-exp-row');
+      lpExpFired = false;
+      clearTimeout(lpExpTimer);
+      lpExpTimer = setTimeout(function () { lpExpFired = true; openExpEdit(id); }, 480);
+    }, { passive: true });
+    $('expList').addEventListener('touchend', function () { clearTimeout(lpExpTimer); });
+    $('expList').addEventListener('touchmove', function () { clearTimeout(lpExpTimer); });
+    $('expList').addEventListener('touchcancel', function () { clearTimeout(lpExpTimer); });
+    $('expList').addEventListener('contextmenu', function (ev) {
+      var card = ev.target.closest ? ev.target.closest('.exp') : null;
+      if (card) ev.preventDefault();
     });
     $('fridgeList').addEventListener('click', function (ev) {
       if (lpFired) { lpFired = false; return; }
@@ -1912,6 +2065,15 @@
     // edit modal
     $('editCancel').addEventListener('click', closeEdit);
     $('editSave').addEventListener('click', saveEdit);
+    // expense edit modal
+    $('expEditCancel').addEventListener('click', closeExpEdit);
+    $('expEditSave').addEventListener('click', saveExpEdit);
+    $('edxCatChips').addEventListener('click', function (ev) {
+      var b = ev.target.closest ? ev.target.closest('button[data-cat]') : null;
+      if (!b) return;
+      edxCat = b.getAttribute('data-cat');
+      syncExpEditUI();
+    });
     $('edStoreChips').addEventListener('click', function (ev) {
       var b = ev.target.closest ? ev.target.closest('button[data-store]') : null;
       if (!b) return;
@@ -1953,6 +2115,7 @@
     document.addEventListener('keydown', function (ev) {
       if (ev.key !== 'Escape') return;
       if (!$('confirmModal').hidden) { closeConfirm(); return; }
+      if (!$('expEditModal').hidden) { closeExpEdit(); return; }
       if (!$('editModal').hidden) { closeEdit(); return; }
       if (!$('importModal').hidden) { closeImport(); return; }
       if ($('sheet').classList.contains('open')) closeSheet();
